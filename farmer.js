@@ -169,7 +169,7 @@
         throw new Error('Wybrane expowisko nie ma listy monsters.');
       }
       if (version !== requestVersion || !running) return;
-      const engine = window.Engine;
+      const engine = Engine;
       if (!engine) throw new Error('Nie znaleziono Engine.');
       const allowed = new Set(expowisko.monsters.map(normalize));
       const result = findNearestTarget(engine, allowed);
