@@ -1,248 +1,723 @@
 
-/** Farmer — kod ładowany przez Tampermonkey z @require. Wymaga @resource farmerData i @grant GM_getResourceText. */
+/**
+ * Farmer
+ * Wymaga:
+ * @grant GM_getResourceText
+ * @grant unsafeWindow
+ * @resource farmerData <adres expowiska.json>
+ */
+
 (() => {
-  const EXISTING = window.Farmer;
-  if (EXISTING?.destroy) EXISTING.destroy();
+  'use strict';
+
+  const game = typeof unsafeWindow !== 'undefined'
+    ? unsafeWindow
+    : window;
+
+  if (window.Farmer?.destroy) {
+    window.Farmer.destroy();
+  }
+
+  const CONFIG = {
+    tickMs: 600,
+    moveRetryMs: 1800,
+    attackRetryMs: 3000,
+    afterFightMs: 1200,
+    maxFightWaitMs: 12000,
+    storageKey: 'farmer-expowisko-id'
+  };
 
   const ROOT_ID = 'farmer-addon-window';
   const STYLE_ID = 'farmer-addon-styles';
-  const KEY = 'farmer-expowisko-id';
+
   const root = document.createElement('div');
   root.id = ROOT_ID;
-  root.className = 'c-window border-window transparent farmer-window';
+  root.className =
+    'c-window border-window transparent farmer-window';
+
   root.setAttribute('data-opacity-lvl', '3');
   root.setAttribute('size-opt', '1');
-  root.style.cssText = 'touch-action:none;position:absolute;left:270px;top:110px;display:block;z-index:10000;';
+
+  root.style.cssText = `
+    touch-action: none;
+    position: absolute;
+    left: 270px;
+    top: 110px;
+    display: block;
+    z-index: 10000;
+  `;
+
   root.innerHTML = `
     <div class="header-label-positioner">
       <div class="draggable-window-element pointer-draggable-handle farmer-drag-handle"></div>
       <div class="header-label">
-        <div class="left-decor"></div><div class="right-decor"></div>
+        <div class="left-decor"></div>
+        <div class="right-decor"></div>
         <div class="text" name="Farmer">Farmer</div>
       </div>
     </div>
+
     <div class="content content--padding-md">
       <div class="inner-content">
         <div class="farmer-content">
-          <label class="farmer-label" for="farmer-exp-id">ID expowiska</label>
-          <input id="farmer-exp-id" class="farmer-input" type="number" min="1" step="1" placeholder="Wpisz ID..." />
+          <label class="farmer-label" for="farmer-exp-id">
+            ID expowiska
+          </label>
+
+          <input
+            id="farmer-exp-id"
+            class="farmer-input"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="Wpisz ID..."
+          />
+
           <div class="farmer-actions">
-            <button type="button" class="farmer-button farmer-start">Start</button>
-            <button type="button" class="farmer-button farmer-stop" disabled>Stop</button>
+            <button type="button" class="farmer-button farmer-start">
+              Start
+            </button>
+            <button type="button" class="farmer-button farmer-stop" disabled>
+              Stop
+            </button>
           </div>
-          <div class="farmer-status" role="status" aria-live="polite">Status: Zatrzymany</div>
+
+          <div class="farmer-status" role="status">
+            Status: Zatrzymany
+          </div>
+          <div class="farmer-target"></div>
+          <div class="farmer-counter">Ataki: 0</div>
         </div>
       </div>
       <div class="window-controlls"></div>
     </div>
-    <div class="c-window__bottom-bar"><div class="interface-element-bottom-bar-background-stretch"></div></div>
-    <div class="close-button-corner-decor">
-      <button type="button" class="close-button" aria-label="Zamknij Farmer"><div class="ie-icon ie-icon-close"></div></button>
+
+    <div class="c-window__bottom-bar">
+      <div class="interface-element-bottom-bar-background-stretch"></div>
     </div>
+
+    <div class="close-button-corner-decor">
+      <button type="button" class="close-button">
+        <div class="ie-icon ie-icon-close"></div>
+      </button>
+    </div>
+
     <div class="border-image"></div>
   `;
 
   const style = document.createElement('style');
   style.id = STYLE_ID;
   style.textContent = `
-    #${ROOT_ID} { width: 258px; box-sizing: border-box; color: #e5d4b0; }
-    #${ROOT_ID} .farmer-drag-handle { cursor: move; touch-action: none; }
-    #${ROOT_ID} .farmer-content { width: 212px; min-height: 125px; padding: 10px 4px 6px; box-sizing: border-box; }
-    #${ROOT_ID} .farmer-label { display:block; margin-bottom: 6px; font-size: 12px; }
-    #${ROOT_ID} .farmer-input { box-sizing:border-box; width:100%; padding:6px 8px; background:#211b17; color:#f7eddb; border:1px solid #8f734b; border-radius:3px; font:inherit; }
-    #${ROOT_ID} .farmer-input:focus { outline:1px solid #caa169; }
-    #${ROOT_ID} .farmer-actions { display:flex; gap:8px; margin-top:10px; }
-    #${ROOT_ID} .farmer-button { flex:1; padding:6px 7px; cursor:pointer; color:#f7eddb; background:linear-gradient(#655035,#3b2c1d); border:1px solid #9a7b50; border-radius:3px; font:inherit; }
-    #${ROOT_ID} .farmer-button:not(:disabled):hover { filter:brightness(1.2); }
-    #${ROOT_ID} .farmer-button:disabled { cursor:default; opacity:.45; }
-    #${ROOT_ID} .farmer-status { margin-top:10px; font-size:11px; min-height:16px; }
+    #${ROOT_ID} {
+      width: 258px;
+      box-sizing: border-box;
+      color: #e5d4b0;
+    }
+
+    #${ROOT_ID} .farmer-drag-handle {
+      cursor: move;
+      touch-action: none;
+    }
+
+    #${ROOT_ID} .farmer-content {
+      width: 212px;
+      min-height: 150px;
+      padding: 10px 4px 6px;
+      box-sizing: border-box;
+    }
+
+    #${ROOT_ID} .farmer-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    #${ROOT_ID} .farmer-input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 6px 8px;
+      background: #211b17;
+      color: #f7eddb;
+      border: 1px solid #8f734b;
+      border-radius: 3px;
+      font: inherit;
+    }
+
+    #${ROOT_ID} .farmer-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    #${ROOT_ID} .farmer-button {
+      flex: 1;
+      padding: 6px 7px;
+      cursor: pointer;
+      color: #f7eddb;
+      background: linear-gradient(#655035, #3b2c1d);
+      border: 1px solid #9a7b50;
+      border-radius: 3px;
+      font: inherit;
+    }
+
+    #${ROOT_ID} .farmer-button:disabled {
+      cursor: default;
+      opacity: .45;
+    }
+
+    #${ROOT_ID} .farmer-status,
+    #${ROOT_ID} .farmer-target,
+    #${ROOT_ID} .farmer-counter {
+      margin-top: 7px;
+      font-size: 11px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    #${ROOT_ID} .farmer-counter {
+      color: #caa169;
+    }
   `;
+
   document.head.appendChild(style);
-  // Wykorzystujemy klasy oryginalnego interfejsu; style gry odpowiadają za ramkę i nagłówek.
-  (document.querySelector('.game-window-positioner') || document.body).appendChild(root);
 
-  const input = root.querySelector('#farmer-exp-id');
-  const startBtn = root.querySelector('.farmer-start');
-  const stopBtn = root.querySelector('.farmer-stop');
-  const status = root.querySelector('.farmer-status');
-  const closeBtn = root.querySelector('.close-button');
-  const dragHandle = root.querySelector('.farmer-drag-handle');
+  (
+    document.querySelector('.game-window-positioner') ||
+    document.body
+  ).appendChild(root);
 
-  const gameWindow =
-    typeof unsafeWindow !== 'undefined'
-        ? unsafeWindow
-        : window;
+  const $ = selector => root.querySelector(selector);
+
+  const input = $('#farmer-exp-id');
+  const startBtn = $('.farmer-start');
+  const stopBtn = $('.farmer-stop');
+  const statusEl = $('.farmer-status');
+  const targetEl = $('.farmer-target');
+  const counterEl = $('.farmer-counter');
 
   let running = false;
+  let timer = null;
   let selectedId = null;
-  let requestVersion = 0;
-  let currentTarget = null;
-  try { input.value = localStorage.getItem(KEY) || ''; } catch {}
+  let allowedNames = new Set();
+  let currentTargetId = null;
+  let attackCount = 0;
+  let lastMove = 0;
+  let lastAttack = 0;
+  let lastFightEnd = 0;
+  let attackPendingUntil = 0;
+  let wasFighting = false;
+  let autoFightClicked = false;
+  let currentMapId = null;
+  let lastDestination = null;
+  let lastHeroPosition = null;
+  let stuckAttempts = 0;
 
-  function setRunning(value) {
-    running = value;
-    input.disabled = value;
-    startBtn.disabled = value;
-    stopBtn.disabled = !value;
-    status.textContent = `Status: ${value ? `Uruchomiony (ID: ${selectedId})` : 'Zatrzymany'}`;
+  try {
+    input.value =
+      localStorage.getItem(CONFIG.storageKey) || '';
+  } catch {}
+
+  function normalize(value) {
+    return String(value ?? '')
+      .normalize('NFC')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLocaleLowerCase('pl');
   }
-  function emit(name) {
-    window.dispatchEvent(new CustomEvent(`farmer:${name}`, {detail:{id: selectedId}}));
+
+  function setStatus(message) {
+    statusEl.textContent = `Status: ${message}`;
   }
-  function normalize(name) {
-    return String(name ?? '').normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('pl');
+
+  function getEngine() {
+    const engine = game.Engine || window.Engine;
+
+    if (!engine?.hero?.d || !engine?.npcs) {
+      throw new Error('Nie znaleziono Engine lub postaci.');
+    }
+
+    return engine;
   }
 
   function getNpcs(engine) {
-    const data = engine.npcs?.check?.() ?? engine.npcs?.getAll?.() ??
-      engine.npcs?.getDrawableList?.();
-    if (!data) throw new Error('Nie można odczytać NPC z silnika gry.');
-    return (Array.isArray(data) ? data : Object.values(data))
-      .map(item => item?.d ?? item)
-      .filter(n => n && Number.isFinite(Number(n.x)) && Number.isFinite(Number(n.y)))
-      .map(n => ({ ...n, x: Number(n.x), y: Number(n.y) }));
+    const source =
+      engine.npcs.check?.() ??
+      engine.npcs.getAll?.() ??
+      engine.npcs.getDrawableList?.();
+
+    if (!source) return [];
+
+    return Object.values(source)
+      .map(obj => {
+        const d = obj?.d ?? obj;
+
+        if (!d) return null;
+
+        return {
+          obj,
+          id: d.id,
+          nick: d.nick ?? d.name,
+          type: Number(d.type),
+          x: Number(d.x),
+          y: Number(d.y)
+        };
+      })
+      .filter(n =>
+        n &&
+        n.id != null &&
+        Number.isFinite(n.x) &&
+        Number.isFinite(n.y)
+      );
   }
 
-  // BFS od pozycji bohatera: pierwszy osiągnięty sąsiad pasującego NPC
-  // gwarantuje najmniejszą liczbę kroków w czterech kierunkach.
-  function findNearestTarget(engine, allowedNames) {
-    const hero = engine.hero?.d;
+  function getAllowedMonsters(engine) {
+    return getNpcs(engine).filter(n =>
+      allowedNames.has(normalize(n.nick)) &&
+      (n.type === 2 || n.type === 3)
+    );
+  }
+
+  function isAdjacent(hero, npc) {
+    return (
+      Math.abs(Number(hero.x) - npc.x) <= 1 &&
+      Math.abs(Number(hero.y) - npc.y) <= 1
+    );
+  }
+
+  function findNearestTarget(engine, targets) {
+    const hero = engine.hero.d;
     const map = engine.map;
+
     const width = Number(map?.d?.x ?? map?.size?.x);
     const height = Number(map?.d?.y ?? map?.size?.y);
-    if (!hero || !Number.isInteger(width) || !Number.isInteger(height) ||
-        !map?.col?.check) {
-      throw new Error('Nie można odczytać pozycji postaci lub kolizji mapy.');
+
+    if (
+      !Number.isInteger(width) ||
+      !Number.isInteger(height) ||
+      typeof map?.col?.check !== 'function'
+    ) {
+      throw new Error('Brak danych kolizji mapy.');
     }
-    const hx = Number(hero.x), hy = Number(hero.y);
-    const targets = getNpcs(engine).filter(n => allowedNames.has(normalize(n.nick ?? n.name)));
-    if (!targets.length) throw new Error('Na aktualnej mapie nie ma NPC z tego expowiska.');
+
+    const hx = Number(hero.x);
+    const hy = Number(hero.y);
 
     const key = (x, y) => `${x},${y}`;
+
     const queue = [[hx, hy]];
     const visited = new Set([key(hx, hy)]);
     const previous = new Map();
-    const steps = [[0, -1], [1, 0], [0, 1], [-1, 0]];
-    const isWalkable = (x, y) => x >= 0 && y >= 0 && x < width && y < height &&
+
+    const directions = [
+      [0, -1],
+      [1, 0],
+      [0, 1],
+      [-1, 0]
+    ];
+
+    const walkable = (x, y) =>
+      x >= 0 &&
+      y >= 0 &&
+      x < width &&
+      y < height &&
       Number(map.col.check(x, y)) === 0;
 
     for (let head = 0; head < queue.length; head++) {
       const [x, y] = queue[head];
-      const target = targets.find(n => Math.abs(n.x - x) + Math.abs(n.y - y) === 1);
-      if (target) {
+
+      const npc = targets.find(target =>
+        Math.abs(target.x - x) <= 1 &&
+        Math.abs(target.y - y) <= 1
+      );
+
+      if (npc) {
         const path = [];
         let current = [x, y];
+
         while (key(...current) !== key(hx, hy)) {
-          path.unshift({ x: current[0], y: current[1] });
+          path.unshift({
+            x: current[0],
+            y: current[1]
+          });
+
           current = previous.get(key(...current));
         }
-        return { target, destination: { x, y }, path, npcCount: targets.length };
+
+        return {
+          npc,
+          destination: { x, y },
+          path
+        };
       }
-      for (const [dx, dy] of steps) {
-        const nx = x + dx, ny = y + dy;
-        if (visited.has(key(nx, ny)) || !isWalkable(nx, ny)) continue;
-        visited.add(key(nx, ny));
-        previous.set(key(nx, ny), [x, y]);
+
+      for (const [dx, dy] of directions) {
+        const nx = x + dx;
+        const ny = y + dy;
+        const k = key(nx, ny);
+
+        if (visited.has(k) || !walkable(nx, ny)) {
+          continue;
+        }
+
+        visited.add(k);
+        previous.set(k, [x, y]);
         queue.push([nx, ny]);
       }
     }
-    throw new Error('Brak dostępnej ścieżki do NPC z wybranego expowiska.');
+
+    return null;
+  }
+
+  function isFighting(engine) {
+    return engine.battle?.show === true;
+  }
+
+  function handleFight(engine, now) {
+    if (isFighting(engine)) {
+      wasFighting = true;
+      setStatus('Walka w toku');
+
+      if (!autoFightClicked) {
+        const button = document.querySelector(
+          '.auto-fight-btn'
+        );
+
+        if (button) {
+          button.click();
+          autoFightClicked = true;
+        }
+      }
+
+      return true;
+    }
+
+    if (wasFighting) {
+      wasFighting = false;
+      autoFightClicked = false;
+      currentTargetId = null;
+      lastFightEnd = now;
+      attackPendingUntil = 0;
+      setStatus('Walka zakończona');
+    }
+
+    return false;
+  }
+
+  function attackNpc(npc, now) {
+    if (now - lastAttack < CONFIG.attackRetryMs) return;
+
+    if (typeof game._g !== 'function') {
+      throw new Error('Brak funkcji _g do rozpoczęcia walki.');
+    }
+
+    const npcId = String(npc.id).replace(/^-/, '');
+
+    // Żądanie rozpoczęcia walki z wybranym NPC.
+    game._g(
+      `fight&a=attack&ff=1&id=-${npcId}`
+    );
+
+    lastAttack = now;
+    attackPendingUntil = now + CONFIG.maxFightWaitMs;
+    attackCount++;
+
+    counterEl.textContent = `Próby ataku: ${attackCount}`;
+    setStatus(`Atak: ${npc.nick}`);
+
+    console.log('[Farmer] Atak:', npc);
+  }
+
+  function moveTo(engine, destination, now) {
+    if (now - lastMove < CONFIG.moveRetryMs) return;
+
+    if (typeof engine.hero.autoGoTo !== 'function') {
+      throw new Error('Brak Engine.hero.autoGoTo.');
+    }
+
+    const hero = engine.hero.d;
+    const pos = `${hero.x},${hero.y}`;
+    const dest = `${destination.x},${destination.y}`;
+
+    if (lastDestination === dest && lastHeroPosition === pos) {
+      stuckAttempts++;
+    } else {
+      stuckAttempts = 0;
+    }
+
+    if (stuckAttempts >= 5) {
+      throw new Error('Postać nie może dotrzeć do celu.');
+    }
+
+    lastHeroPosition = pos;
+    lastDestination = dest;
+    lastMove = now;
+
+    engine.hero.autoGoTo(destination);
+  }
+
+  function tick() {
+    if (!running) return;
+
+    try {
+      const engine = getEngine();
+      const now = Date.now();
+
+      if (engine.dead) {
+        stop('Postać nie żyje');
+        return;
+      }
+
+      // Zatrzymaj działania na czas CAPTCHA.
+      const captcha = document.querySelector('.captcha-window');
+      if (
+        captcha &&
+        captcha.getClientRects().length > 0 &&
+        getComputedStyle(captcha).visibility !== 'hidden'
+      ) {
+        stop('Wykryto CAPTCHA');
+        return;
+      }
+
+      const mapId = engine.map?.d?.id;
+
+      if (currentMapId !== null && mapId !== currentMapId) {
+        currentTargetId = null;
+        lastDestination = null;
+        lastHeroPosition = null;
+        stuckAttempts = 0;
+      }
+
+      currentMapId = mapId;
+
+      if (handleFight(engine, now)) return;
+
+      if (now - lastFightEnd < CONFIG.afterFightMs) {
+        return;
+      }
+
+      // Czekamy na odpowiedź gry po rozpoczęciu ataku.
+      if (now < attackPendingUntil) {
+        const npcs = getNpcs(engine);
+
+        const stillExists = npcs.some(n =>
+          String(n.id) === String(currentTargetId)
+        );
+
+        if (!stillExists) {
+          attackPendingUntil = 0;
+          currentTargetId = null;
+        } else {
+          setStatus('Oczekiwanie na walkę');
+          return;
+        }
+      }
+
+      const targets = getAllowedMonsters(engine);
+
+      if (!targets.length) {
+        currentTargetId = null;
+        targetEl.textContent = 'Cel: brak';
+        setStatus('Oczekiwanie na potwory');
+        return;
+      }
+
+      const result = findNearestTarget(engine, targets);
+
+      if (!result) {
+        setStatus('Brak osiągalnych potworów');
+        return;
+      }
+
+      const { npc, destination, path } = result;
+
+      currentTargetId = npc.id;
+      targetEl.textContent = `Cel: ${npc.nick}`;
+
+      if (isAdjacent(engine.hero.d, npc)) {
+        attackNpc(npc, now);
+      } else {
+        setStatus(`Podchodzę: ${npc.nick} (${path.length} kroków)`);
+        moveTo(engine, destination, now);
+      }
+
+    } catch (error) {
+      console.error('[Farmer]', error);
+      stop(`Błąd: ${error.message}`);
+    }
   }
 
   function start() {
     if (running) return;
+
     const id = Number(input.value);
-    if (!Number.isSafeInteger(id) || id <= 0) {
-      status.textContent = 'Podaj poprawne ID expowiska.';
-      input.focus();
+
+    if (!Number.isSafeInteger(id) || id < 1) {
+      setStatus('Podaj poprawne ID expowiska');
       return;
     }
-    selectedId = id;
-    const version = ++requestVersion;
-    setRunning(true);
-    status.textContent = 'Status: Odczytywanie expowisk...';
+
     try {
       if (typeof GM_getResourceText !== 'function') {
-        throw new Error('Brak GM_getResourceText. Dodaj @resource farmerData oraz @grant GM_getResourceText.');
+        throw new Error('Brak GM_getResourceText.');
       }
-      const resourceText = GM_getResourceText('farmerData');
-      if (!resourceText) throw new Error('Zasób farmerData jest pusty lub niedostępny.');
-      const expowiska = JSON.parse(resourceText);
-      if (!Array.isArray(expowiska)) throw new Error('Plik JSON musi zawierać tablicę expowisk.');
-      const expowisko = expowiska.find(e => Number(e.id) === id);
-      if (!expowisko) throw new Error(`Brak expowiska z ID ${id}.`);
-      if (!Array.isArray(expowisko.monsters) || !expowisko.monsters.length) {
-        throw new Error('Wybrane expowisko nie ma listy monsters.');
+
+      const json = GM_getResourceText('farmerData');
+      const expowiska = JSON.parse(json);
+
+      if (!Array.isArray(expowiska)) {
+        throw new Error('Niepoprawny format expowiska.json.');
       }
-      if (version !== requestVersion || !running) return;
-      const engine = gameWindow.Engine;
-      if (!engine) throw new Error('Nie znaleziono Engine.');
-      const allowed = new Set(expowisko.monsters.map(normalize));
-      const result = findNearestTarget(engine, allowed);
-      if (version !== requestVersion || !running) return;
-      currentTarget = result;
-      try { localStorage.setItem(KEY, String(id)); } catch {}
-      emit('start');
-      console.log('[Farmer] Wybrane expowisko:', expowisko);
-      console.log('[Farmer] Najbliższy dozwolony NPC i ścieżka:', result);
-      window.dispatchEvent(new CustomEvent('farmer:target', {detail: {id, ...result}}));
-      status.textContent = `Cel: ${result.target.nick ?? result.target.name} (${result.path.length} kroków)`;
-      if (result.path.length > 0) {
-        if (typeof engine.hero?.autoGoTo === 'function') {
-          engine.hero.autoGoTo(result.destination);
-        } else {
-          status.textContent += ' — brak autoGoTo; trasa w konsoli';
-        }
-      } else {
-        status.textContent = `Już obok: ${result.target.nick ?? result.target.name}`;
+
+      const expowisko = expowiska.find(e =>
+        Number(e.id) === id
+      );
+
+      if (!expowisko) {
+        throw new Error(`Nie znaleziono expowiska ID ${id}.`);
       }
+
+      if (!Array.isArray(expowisko.monsters) ||
+          expowisko.monsters.length === 0) {
+        throw new Error('Lista monsters jest pusta.');
+      }
+
+      getEngine();
+
+      allowedNames = new Set(
+        expowisko.monsters.map(normalize)
+      );
+
+      selectedId = id;
+      running = true;
+      attackCount = 0;
+      currentTargetId = null;
+      currentMapId = null;
+      lastMove = 0;
+      lastAttack = 0;
+      lastFightEnd = 0;
+      attackPendingUntil = 0;
+      wasFighting = false;
+      autoFightClicked = false;
+      lastDestination = null;
+      lastHeroPosition = null;
+      stuckAttempts = 0;
+
+      input.disabled = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+
+      counterEl.textContent = 'Próby ataku: 0';
+      setStatus(`Uruchomiony: ${expowisko.name}`);
+
+      try {
+        localStorage.setItem(CONFIG.storageKey, String(id));
+      } catch {}
+
+      console.log('[Farmer] Start:', expowisko);
+
+      timer = setInterval(tick, CONFIG.tickMs);
+      tick();
+
     } catch (error) {
-      if (version !== requestVersion || !running) return;
       console.error('[Farmer]', error);
-      setRunning(false);
-      status.textContent = `Błąd: ${error.message}`;
+      setStatus(`Błąd: ${error.message}`);
     }
   }
-  function stop() {
-    if (!running) return;
-    ++requestVersion;
-    // Anulujemy automatyczną trasę, jeśli silnik przechowuje ją jako tablicę.
-    if (Array.isArray(window.Engine?.hero?.autoPath)) window.Engine.hero.autoPath = [];
-    currentTarget = null;
-    setRunning(false);
-    emit('stop');
-  }
-  startBtn.addEventListener('click', start);
-  stopBtn.addEventListener('click', stop);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !running) start(); });
 
+  function stop(reason = 'Zatrzymany') {
+    running = false;
+
+    if (timer !== null) {
+      clearInterval(timer);
+      timer = null;
+    }
+
+    const engine = game.Engine || window.Engine;
+
+    if (Array.isArray(engine?.hero?.autoPath)) {
+      engine.hero.autoPath = [];
+    }
+
+    input.disabled = false;
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+
+    currentTargetId = null;
+    attackPendingUntil = 0;
+
+    setStatus(reason);
+    console.log('[Farmer] Stop:', reason);
+  }
+
+  startBtn.addEventListener('click', start);
+  stopBtn.addEventListener('click', () => stop());
+
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !running) start();
+  });
+
+  // Przeciąganie okna
+  const dragHandle = $('.farmer-drag-handle');
   let drag = null;
-  function onDragStart(event) {
+
+  dragHandle.addEventListener('pointerdown', event => {
     if (event.button !== 0) return;
+
     event.preventDefault();
+
     const rect = root.getBoundingClientRect();
-    const parentRect = root.offsetParent?.getBoundingClientRect() ?? {left:0,top:0};
-    drag = { x:event.clientX, y:event.clientY, left:rect.left-parentRect.left, top:rect.top-parentRect.top };
+    const parentRect = root.offsetParent?.getBoundingClientRect()
+      ?? { left: 0, top: 0 };
+
+    drag = {
+      x: event.clientX,
+      y: event.clientY,
+      left: rect.left - parentRect.left,
+      top: rect.top - parentRect.top
+    };
+
     dragHandle.setPointerCapture(event.pointerId);
-  }
-  function onDragMove(event) {
+  });
+
+  dragHandle.addEventListener('pointermove', event => {
     if (!drag) return;
-    root.style.left = `${Math.max(0, drag.left + event.clientX - drag.x)}px`;
-    root.style.top = `${Math.max(0, drag.top + event.clientY - drag.y)}px`;
-  }
-  function onDragEnd() { drag = null; }
-  dragHandle.addEventListener('pointerdown', onDragStart);
-  dragHandle.addEventListener('pointermove', onDragMove);
-  dragHandle.addEventListener('pointerup', onDragEnd);
-  dragHandle.addEventListener('pointercancel', onDragEnd);
+
+    root.style.left =
+      `${Math.max(0, drag.left + event.clientX - drag.x)}px`;
+
+    root.style.top =
+      `${Math.max(0, drag.top + event.clientY - drag.y)}px`;
+  });
+
+  const endDrag = () => { drag = null; };
+
+  dragHandle.addEventListener('pointerup', endDrag);
+  dragHandle.addEventListener('pointercancel', endDrag);
 
   function destroy() {
     stop();
     root.remove();
     style.remove();
-    if (window.Farmer === api) delete window.Farmer;
+
+    if (window.Farmer === api) {
+      delete window.Farmer;
+    }
   }
-  closeBtn.addEventListener('click', destroy);
-  const api = { start, stop, destroy, getState: () => ({running, id: selectedId, target: currentTarget}), findNearestTarget };
+
+  $('.close-button').addEventListener('click', destroy);
+
+  const api = {
+    start,
+    stop,
+    destroy,
+    getState: () => ({
+      running,
+      selectedId,
+      currentTargetId,
+      attackCount,
+      allowedNames: [...allowedNames]
+    })
+  };
+
   window.Farmer = api;
 })();
