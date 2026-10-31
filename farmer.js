@@ -67,6 +67,12 @@
   const status = root.querySelector('.farmer-status');
   const closeBtn = root.querySelector('.close-button');
   const dragHandle = root.querySelector('.farmer-drag-handle');
+
+  const gameWindow =
+    typeof unsafeWindow !== 'undefined'
+        ? unsafeWindow
+        : window;
+
   let running = false;
   let selectedId = null;
   let requestVersion = 0;
@@ -169,7 +175,7 @@
         throw new Error('Wybrane expowisko nie ma listy monsters.');
       }
       if (version !== requestVersion || !running) return;
-      const engine = Engine;
+      const engine = gameWindow.Engine;
       if (!engine) throw new Error('Nie znaleziono Engine.');
       const allowed = new Set(expowisko.monsters.map(normalize));
       const result = findNearestTarget(engine, allowed);
