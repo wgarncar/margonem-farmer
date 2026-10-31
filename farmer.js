@@ -1,4 +1,5 @@
-/** Farmer — panel UI do uruchomienia w konsoli Margonem. */
+
+/** Farmer — kod ładowany przez Tampermonkey z @require. Wymaga @resource farmerData i @grant GM_getResourceText. */
 (() => {
   const EXISTING = window.Farmer;
   if (EXISTING?.destroy) EXISTING.destroy();
@@ -68,6 +69,8 @@
   const dragHandle = root.querySelector('.farmer-drag-handle');
   let running = false;
   let selectedId = null;
+  let requestVersion = 0;
+  let currentTarget = null;
   try { input.value = localStorage.getItem(KEY) || ''; } catch {}
 
   function setRunning(value) {
@@ -80,7 +83,68 @@
   function emit(name) {
     window.dispatchEvent(new CustomEvent(`farmer:${name}`, {detail:{id: selectedId}}));
   }
+  function normalize(name) {
+    return String(name ?? '').normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('pl');
+  }
+
+  function getNpcs(engine) {
+    const data = engine.npcs?.check?.() ?? engine.npcs?.getAll?.() ??
+      engine.npcs?.getDrawableList?.();
+    if (!data) throw new Error('Nie można odczytać NPC z silnika gry.');
+    return (Array.isArray(data) ? data : Object.values(data))
+      .map(item => item?.d ?? item)
+      .filter(n => n && Number.isFinite(Number(n.x)) && Number.isFinite(Number(n.y)))
+      .map(n => ({ ...n, x: Number(n.x), y: Number(n.y) }));
+  }
+
+  // BFS od pozycji bohatera: pierwszy osiągnięty sąsiad pasującego NPC
+  // gwarantuje najmniejszą liczbę kroków w czterech kierunkach.
+  function findNearestTarget(engine, allowedNames) {
+    const hero = engine.hero?.d;
+    const map = engine.map;
+    const width = Number(map?.d?.x ?? map?.size?.x);
+    const height = Number(map?.d?.y ?? map?.size?.y);
+    if (!hero || !Number.isInteger(width) || !Number.isInteger(height) ||
+        !map?.col?.check) {
+      throw new Error('Nie można odczytać pozycji postaci lub kolizji mapy.');
+    }
+    const hx = Number(hero.x), hy = Number(hero.y);
+    const targets = getNpcs(engine).filter(n => allowedNames.has(normalize(n.nick ?? n.name)));
+    if (!targets.length) throw new Error('Na aktualnej mapie nie ma NPC z tego expowiska.');
+
+    const key = (x, y) => `${x},${y}`;
+    const queue = [[hx, hy]];
+    const visited = new Set([key(hx, hy)]);
+    const previous = new Map();
+    const steps = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    const isWalkable = (x, y) => x >= 0 && y >= 0 && x < width && y < height &&
+      Number(map.col.check(x, y)) === 0;
+
+    for (let head = 0; head < queue.length; head++) {
+      const [x, y] = queue[head];
+      const target = targets.find(n => Math.abs(n.x - x) + Math.abs(n.y - y) === 1);
+      if (target) {
+        const path = [];
+        let current = [x, y];
+        while (key(...current) !== key(hx, hy)) {
+          path.unshift({ x: current[0], y: current[1] });
+          current = previous.get(key(...current));
+        }
+        return { target, destination: { x, y }, path, npcCount: targets.length };
+      }
+      for (const [dx, dy] of steps) {
+        const nx = x + dx, ny = y + dy;
+        if (visited.has(key(nx, ny)) || !isWalkable(nx, ny)) continue;
+        visited.add(key(nx, ny));
+        previous.set(key(nx, ny), [x, y]);
+        queue.push([nx, ny]);
+      }
+    }
+    throw new Error('Brak dostępnej ścieżki do NPC z wybranego expowiska.');
+  }
+
   function start() {
+    if (running) return;
     const id = Number(input.value);
     if (!Number.isSafeInteger(id) || id <= 0) {
       status.textContent = 'Podaj poprawne ID expowiska.';
@@ -88,12 +152,57 @@
       return;
     }
     selectedId = id;
-    try { localStorage.setItem(KEY, String(id)); } catch {}
+    const version = ++requestVersion;
     setRunning(true);
-    emit('start');
+    status.textContent = 'Status: Odczytywanie expowisk...';
+    try {
+      if (typeof GM_getResourceText !== 'function') {
+        throw new Error('Brak GM_getResourceText. Dodaj @resource farmerData oraz @grant GM_getResourceText.');
+      }
+      const resourceText = GM_getResourceText('farmerData');
+      if (!resourceText) throw new Error('Zasób farmerData jest pusty lub niedostępny.');
+      const expowiska = JSON.parse(resourceText);
+      if (!Array.isArray(expowiska)) throw new Error('Plik JSON musi zawierać tablicę expowisk.');
+      const expowisko = expowiska.find(e => Number(e.id) === id);
+      if (!expowisko) throw new Error(`Brak expowiska z ID ${id}.`);
+      if (!Array.isArray(expowisko.monsters) || !expowisko.monsters.length) {
+        throw new Error('Wybrane expowisko nie ma listy monsters.');
+      }
+      if (version !== requestVersion || !running) return;
+      const engine = window.Engine;
+      if (!engine) throw new Error('Nie znaleziono Engine.');
+      const allowed = new Set(expowisko.monsters.map(normalize));
+      const result = findNearestTarget(engine, allowed);
+      if (version !== requestVersion || !running) return;
+      currentTarget = result;
+      try { localStorage.setItem(KEY, String(id)); } catch {}
+      emit('start');
+      console.log('[Farmer] Wybrane expowisko:', expowisko);
+      console.log('[Farmer] Najbliższy dozwolony NPC i ścieżka:', result);
+      window.dispatchEvent(new CustomEvent('farmer:target', {detail: {id, ...result}}));
+      status.textContent = `Cel: ${result.target.nick ?? result.target.name} (${result.path.length} kroków)`;
+      if (result.path.length > 0) {
+        if (typeof engine.hero?.autoGoTo === 'function') {
+          engine.hero.autoGoTo(result.destination);
+        } else {
+          status.textContent += ' — brak autoGoTo; trasa w konsoli';
+        }
+      } else {
+        status.textContent = `Już obok: ${result.target.nick ?? result.target.name}`;
+      }
+    } catch (error) {
+      if (version !== requestVersion || !running) return;
+      console.error('[Farmer]', error);
+      setRunning(false);
+      status.textContent = `Błąd: ${error.message}`;
+    }
   }
   function stop() {
     if (!running) return;
+    ++requestVersion;
+    // Anulujemy automatyczną trasę, jeśli silnik przechowuje ją jako tablicę.
+    if (Array.isArray(window.Engine?.hero?.autoPath)) window.Engine.hero.autoPath = [];
+    currentTarget = null;
     setRunning(false);
     emit('stop');
   }
@@ -128,6 +237,6 @@
     if (window.Farmer === api) delete window.Farmer;
   }
   closeBtn.addEventListener('click', destroy);
-  const api = { start, stop, destroy, getState: () => ({running, id: selectedId}) };
+  const api = { start, stop, destroy, getState: () => ({running, id: selectedId, target: currentTarget}), findNearestTarget };
   window.Farmer = api;
 })();

@@ -1,0 +1,2472 @@
+[
+  {
+    "id": 1,
+    "name": "grobowce",
+    "lvl": 18,
+    "monsters": [
+      "Trupówka pospolita",
+      "Gacówka rogata",
+      "Szabrownik",
+      "Duża larwa",
+      "Adept",
+      "Skolopendra podziemna"
+    ],
+    "maps": [
+      "Krypta Rodu Heregata",
+      "Krypta Rodu Heregata p.1",
+      "Krypta Rodu Heregata p.2 - lewe skrzydło",
+      "Krypta Rodu Heregata p.2 - prawe skrzydło",
+      "Grobowiec Rodziny Tywelta",
+      "Grobowiec Rodziny Tywelta p.1",
+      "Grobowiec Rodziny Tywelta p.2"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "mrówki",
+    "lvl": 20,
+    "monsters": [
+      "Brązowa mrówka robotnica",
+      "Brązowa mrówka tragarz",
+      "Brązowa mrówka żołnierz",
+      "Mrówcza Królowa (elita 22lvl)"
+    ],
+    "maps": [
+      "Kopiec Mrówek p.2",
+      "Mrowisko",
+      "Kopiec Mrówek",
+      "Mrowisko p.1",
+      "Kopiec Mrówek p.1",
+      "Mrowisko p.2"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "pumy i tygrysy",
+    "lvl": 21,
+    "monsters": [
+      "Puma",
+      "Tygrys"
+    ],
+    "maps": [
+      "Kryjówka Dzikich Kotów",
+      "Leśna Przełęcz",
+      "Tygrysia Polana",
+      "Jaskinia Dzikich Kotów"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "niedźwiedzie i nietoperze",
+    "lvl": 23,
+    "monsters": [
+      "Niedźwiadek",
+      "Niedźwiedź brunatny",
+      "Niedźwiedź czarny",
+      "Niedźwiedź szary",
+      "Gacek szary",
+      "Karhu (elita 22lvl)",
+      "Paladyński Apostata (elita 25lvl)"
+    ],
+    "maps": [
+      "Siedlisko Nietoperzy p.1",
+      "Siedlisko Nietoperzy p.2",
+      "Siedlisko Nietoperzy p.3 - sala 1",
+      "Siedlisko Nietoperzy p.4",
+      "Siedlisko Nietoperzy p.5",
+      "Dziewicza Knieja",
+      "Siedlisko Nietoperzy p.3 - sala 2"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "bazyliszki",
+    "lvl": 26,
+    "monsters": [
+      "Leśny bazyliszek",
+      "Ziemny bazyliszek",
+      "Szlachetny bazyliszek",
+      "Kamienny bazyliszek"
+    ],
+    "maps": [
+      "Las Tropicieli"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "mulusy",
+    "lvl": 28,
+    "monsters": [
+      "Fula Gula",
+      "Nuna Gula",
+      "Zulu Mulu",
+      "Dida Gula",
+      "Bulu Mulu",
+      "Zulu Gula",
+      "Furu Mulu",
+      "Zulu Furla (elita 28lvl)",
+      "Nuna Furla (elita 28lvl)",
+      "Mula Furla (elita 28lvl)"
+    ],
+    "maps": [
+      "Dzikie Pagórki",
+      "Osada Mulusów",
+      "Pradawne Wzgórze Przodków"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "demony",
+    "lvl": 29,
+    "monsters": [
+      "Pomniejszy demon",
+      "Mały demon",
+      "Nieznośny demon",
+      "Dokuczliwy bies",
+      "Kąśliwy demon",
+      "Paskudny demon",
+      "Cerber (elita 30lvl)"
+    ],
+    "maps": [
+      "Przeklęta Strażnica",
+      "Przeklęta Strażnica p.1",
+      "Przeklęta Strażnica p.2",
+      "Przeklęta Strażnica - podziemia p.1 s.1",
+      "Przeklęta Strażnica - podziemia p.1 s.2",
+      "Przeklęta Strażnica - podziemia p.2 s.1",
+      "Przeklęta Strażnica - podziemia p.2 s.2",
+      "Przeklęta Strażnica - podziemia p.2 s.3"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "rozbojnicy",
+    "lvl": 32,
+    "monsters": [
+      "Pospolity zbir",
+      "Zapijaczony zbój",
+      "Podejrzany zakapior",
+      "Stary rozbójnik",
+      "Przebiegły łotr",
+      "Rozbójniczka",
+      "Zły zbir",
+      "Herszt rozbójników (elita 32lvl)"
+    ],
+    "maps": [
+      "Przełęcz Łotrzyków",
+      "Dolina Rozbójników",
+      "Namiot Bandytów",
+      "Pagórki Łupieżców",
+      "Kamienna Kryjówka",
+      "Skład Grabieżców"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "gobliny",
+    "lvl": 34,
+    "monsters": [
+      "Goblin traper",
+      "Leśny goblin",
+      "Pancerny goblin",
+      "Zły goblin",
+      "Mistrz fechtunku",
+      "Władca krzewów",
+      "Zakuty goblin (elita 35lvl)"
+    ],
+    "maps": [
+      "Las Goblinów",
+      "Morwowe Przejście",
+      "Podmokła Dolina",
+      "Jaskinia Pogardy"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "puffy",
+    "lvl": 37,
+    "monsters": [
+      "Młody puff",
+      "Puff",
+      "Młody onyksowy skorpion",
+      "Onyksowy skorpion",
+      "Nocny Puff (elita 38lvl)"
+    ],
+    "maps": [
+      "Pieczara Niepogody p.1",
+      "Pieczara Niepogody p.2 - sala 1",
+      "Pieczara Niepogody p.3",
+      "Pieczara Niepogody p.4",
+      "Pieczara Niepogody p.2 - sala 2",
+      "Pieczara Niepogody p.5"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "dziki",
+    "lvl": 40,
+    "monsters": [
+      "Warchlak",
+      "Locha",
+      "Odyniec"
+    ],
+    "maps": [
+      "Spokojne Przejście",
+      "Racicowy Matecznik",
+      "Ukwiecona Skarpa",
+      "Pieczara Kwiku - sala 1",
+      "Pieczara Kwiku - sala 2"
+    ]
+  },
+  {
+    "id": 12,
+    "name": "ghule",
+    "lvl": 40,
+    "monsters": [
+      "Ghul słabeusz",
+      "Ghul nocny",
+      "Ghul cmentarny",
+      "Ghul wojownik",
+      "Ghul szaman",
+      "Dowódca Ghuli (elita 42lvl)"
+    ],
+    "maps": [
+      "Ghuli Mogilnik",
+      "Zapomniany Grobowiec p.1",
+      "Zapomniany Grobowiec p.2",
+      "Zapomniany Grobowiec p.3",
+      "Zapomniany Grobowiec p.4",
+      "Zapomniany Grobowiec p.5",
+      "Polana Ścierwojadów"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "wilcze plemię",
+    "lvl": 44,
+    "monsters": [
+      "Wilczy Śpiew",
+      "Wilcze Prawo",
+      "Zakrzywiony Pazur",
+      "Oko Wilka",
+      "Wilcza Więź",
+      "Wilcza Paszcza (elita 44lvl)",
+      "Wilcza Jagoda (elita 44lvl)"
+    ],
+    "maps": [
+      "Krasowa Pieczara p.1",
+      "Krasowa Pieczara p.2",
+      "Krasowa Pieczara p.3",
+      "Warczące Osuwiska",
+      "Wilcza Nora p.1",
+      "Wilcza Nora p.2",
+      "Legowisko Wilczej Hordy",
+      "Wilcza Skarpa"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "tolloki",
+    "lvl": 45,
+    "monsters": [
+      "Tollok Boger",
+      "Tollok Zibink",
+      "Tollok Surbit",
+      "Tollok Tuarai"
+    ],
+    "maps": [
+      "Skalne Turnie",
+      "Skarpiska Tolloków"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "zbiry",
+    "lvl": 46,
+    "monsters": [
+      "Podły szabrownik",
+      "Nikczemny łotr",
+      "Niegodziwy drań"
+    ],
+    "maps": [
+      "Stary Kupiecki Trakt",
+      "Stukot Widmowych Kół",
+      "Ciemnica Szubrawców p.1 - sala 1",
+      "Ciemnica Szubrawców p.1 - sala 2",
+      "Ciemnica Szubrawców p.1 - sala 3",
+      "Wertepy Rzezimieszków"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "orkowie",
+    "lvl": 47,
+    "monsters": [
+      "Ork bashwooz",
+      "Ork zhaghokk",
+      "Ork kuurgh",
+      "Ork trarroll",
+      "Ork wuakl",
+      "Thowar (elita 50lvl)",
+      "Krogor (elita 50lvl)"
+    ],
+    "maps": [
+      "Zburzona Twierdza",
+      "Świszcząca Grota p.1",
+      "Świszcząca Grota p.2",
+      "Świszcząca Grota p.3",
+      "Świszcząca Grota p.4",
+      "Nawiedzony Jar",
+      "Stare Wyrobisko p.1",
+      "Stare Wyrobisko p.2",
+      "Stare Wyrobisko p.3",
+      "Stare Wyrobisko p.4",
+      "Stare Wyrobisko p.5",
+      "Opuszczony Bastion",
+      "Podziemne Przejście p.1",
+      "Podziemne Przejście p.2",
+      "Zrujnowana Wieża"
+    ]
+  },
+  {
+    "id": 17,
+    "name": "przesmyk",
+    "lvl": 50,
+    "monsters": [
+      "Grzechotnik",
+      "Kobra",
+      "Harpia złota",
+      "Harpia",
+      "Orzeł górski",
+      "Czarny orzeł"
+    ],
+    "maps": [
+      "Mroczny Przesmyk",
+      "Mroczna Pieczara p.1 - sala 1",
+      "Mroczna Pieczara p.2",
+      "Zapomniany Szlak",
+      "Mroczna Pieczara p.1 - sala 3",
+      "Mroczna Pieczara p.1 - sala 2",
+      "Mroczna Pieczara p.0"
+    ]
+  },
+  {
+    "id": 18,
+    "name": "galarety",
+    "lvl": 51,
+    "monsters": [
+      "Wodna galareta",
+      "Zgniła galareta",
+      "Przeźroczysta galareta",
+      "Trująca galareta",
+      "Pąsowa galareta",
+      "Morska galareta"
+    ],
+    "maps": [
+      "Mokra Grota p.1",
+      "Mokra Grota p.2",
+      "Mokra Grota p.2 - korytarz",
+      "Mokra Grota p.1 - boczny korytarz",
+      "Mokra Grota p.1 - przełaz"
+    ]
+  },
+  {
+    "id": 19,
+    "name": "pokątniki",
+    "lvl": 52,
+    "monsters": [
+      "Pokątnik Mglisty",
+      "Pokątnik Ochnowy",
+      "Pokątnik Karminowy"
+    ],
+    "maps": [
+      "Grota Bezszelestnych Kroków - sala 1",
+      "Grota Bezszelestnych Kroków - sala 2",
+      "Grota Bezszelestnych Kroków - sala 3"
+    ]
+  },
+  {
+    "id": 20,
+    "name": "koboldy",
+    "lvl": 54,
+    "monsters": [
+      "Kobold",
+      "Kobold łucznik",
+      "Kobold nożownik"
+    ],
+    "maps": [
+      "Lazurytowa Grota p.1",
+      "Lazurytowa Grota p.2",
+      "Lazurytowa Grota p.3 - sala 2",
+      "Lazurytowa Grota p.4",
+      "Lazurytowa Grota p.3 - sala 1"
+    ]
+  },
+  {
+    "id": 21,
+    "name": "żądłaki",
+    "lvl": 58,
+    "monsters": [
+      "Żądłak rogaty",
+      "Żądłak",
+      "Wściekłówka",
+      "Nieżłopka wątpia (elita 60lvl)"
+    ],
+    "maps": [
+      "Porzucone Pasieki",
+      "Kopalnia Kapiącego Miodu p.1 - sala 1",
+      "Kopalnia Kapiącego Miodu p.2 - sala Owadziej Matki",
+      "Kopalnia Kapiącego Miodu p.1 - sala 2",
+      "Kopalnia Kapiącego Miodu p.2 - sala 1",
+      "Kopalnia Kapiącego Miodu p.2 - sala 2",
+      "Kopalnia Kapiącego Miodu p.3"
+    ]
+  },
+  {
+    "id": 22,
+    "name": "bazyliszki",
+    "lvl": 61,
+    "monsters": [
+      "Srebrny bazyliszek",
+      "Magiczny bazyliszek",
+      "Purpurowy bazyliszek",
+      "Bazyliszek Mroku (elita 63lvl)"
+    ],
+    "maps": [
+      "Pieczara Szaleńców - sala 1",
+      "Pieczara Szaleńców - sala 2",
+      "Pieczara Szaleńców - sala 3",
+      "Pieczara Szaleńców - sala 4"
+    ]
+  },
+  {
+    "id": 23,
+    "name": "gnolle",
+    "lvl": 64,
+    "monsters": [
+      "Gnoll wojownik",
+      "Gnoll łucznik",
+      "Gnoll mistrz ostrzy",
+      "Gnoll szaman",
+      "Gnoll łowca",
+      "Gnoll strażnik",
+      "Tarrol Agze (elita 65lvl)"
+    ],
+    "maps": [
+      "Radosna Polana",
+      "Wioska Gnolli",
+      "Jaskinia Gnollich Szamanów p.2",
+      "Jaskinia Gnollich Szamanów p.1",
+      "Namiot Vari Krugera",
+      "Czeluść Ognistej Pożogi",
+      "Jaskinia Gnollich Szamanów p.3",
+      "Jaskinia Gnollich Szamanów - komnata Kozuga",
+      "Grota Pragnolli p.1",
+      "Grota Pragnolli p.1 - sala 2",
+      "Grota Pragnolli p.2",
+      "Grota Pragnolli p.3"
+    ]
+  },
+  {
+    "id": 24,
+    "name": "mrówcza kolonia",
+    "lvl": 66,
+    "monsters": [
+      "Mrówka żołnierz",
+      "Mrówka robotnica",
+      "Mrówka z larwą",
+      "Mrówka Królowa (elita 67lvl)"
+    ],
+    "maps": [
+      "Mrówcza Kolonia p.1 - lewy tunel",
+      "Mrówcza Kolonia p.1 - prawy tunel",
+      "Mrówcza Kolonia p.2 - lewe korytarze",
+      "Mrówcza Kolonia p.2 - prawe korytarze",
+      "Mrówcza Kolonia p.3 - lewa komora jaj",
+      "Mrówcza Kolonia p.3 - prawa komora jaj",
+      "Mrówcza Kolonia p.4 - królewskie gniazdo"
+    ]
+  },
+  {
+    "id": 25,
+    "name": "rosomaki",
+    "lvl": 66,
+    "monsters": [
+      "Rosomak",
+      "Rosomak skalny"
+    ],
+    "maps": [
+      "Zniszczone Opactwo",
+      "Leśny Bród"
+    ]
+  },
+  {
+    "id": 26,
+    "name": "olbrzymy",
+    "lvl": 67,
+    "monsters": [
+      "Olbrzym miotający",
+      "Olbrzym z maczugą",
+      "Wiekowy olbrzym"
+    ],
+    "maps": [
+      "Kamienna Jaskinia - sala 1",
+      "Kamienna Jaskinia - sala 2"
+    ]
+  },
+  {
+    "id": 27,
+    "name": "Andarum i okolice",
+    "lvl": 70,
+    "monsters": [
+      "Lazurowy tygrys",
+      "Strażnik Andarum",
+      "Śnieżny wilk",
+      "Śnieżny tygrys",
+      "Śnieżny niedźwiedź"
+    ],
+    "maps": [
+      "Andarum Ilami",
+      "Skały Mroźnych Śpiewów",
+      "Cmentarzysko Szerpów",
+      "Śnieżna Granica"
+    ]
+  },
+  {
+    "id": 28,
+    "name": "jaskiniowe tolloki",
+    "lvl": 71,
+    "monsters": [
+      "Tollok Muchag",
+      "Tollok Zombe",
+      "Tollok Tarmec",
+      "Tollok Vitez (elita 72lvl)"
+    ],
+    "maps": [
+      "Zdradzieckie Przejście p.1",
+      "Głębokie Skałki p.1",
+      "Głębokie Skałki p.2",
+      "Głębokie Skałki p.3",
+      "Głębokie Skałki p.4"
+    ]
+  },
+  {
+    "id": 29,
+    "name": "demilisze",
+    "lvl": 72,
+    "monsters": [
+      "Demilisz",
+      "Wściekły demilisz"
+    ],
+    "maps": [
+      "Krypty Dusz Śniegu p.1",
+      "Krypty Dusz Śniegu p.2",
+      "Krypty Dusz Śniegu p.3",
+      "Krypty Dusz Śniegu p.3 - komnata Lisza"
+    ]
+  },
+  {
+    "id": 30,
+    "name": "mnisi",
+    "lvl": 74,
+    "monsters": [
+      "Zamyślony mnich",
+      "Zakapturzony mędrzec",
+      "Pokutujący zakonnik",
+      "Członek zakonu",
+      "Brat andaryjski",
+      "Wojownik w habicie"
+    ],
+    "maps": [
+      "Świątynia Andarum",
+      "Świątynia Andarum - zejście lewe",
+      "Świątynia Andarum - zejście prawe",
+      "Świątynia Andarum - podziemia",
+      "Świątynia Andarum - lokum mnichów"
+    ]
+  },
+  {
+    "id": 31,
+    "name": "biblioteka Andarum",
+    "lvl": 75,
+    "monsters": [
+      "Strażnik cennych ksiąg",
+      "Władca pastorału",
+      "Klasztorny brodacz",
+      "Sługa ołtarza",
+      "Zakonnik wyższego kręgu",
+      "Duchowny w błękicie",
+      "Selder (elita 76lvl)"
+    ],
+    "maps": [
+      "Świątynia Andarum - biblioteka"
+    ]
+  },
+  {
+    "id": 32,
+    "name": "magazynierzy",
+    "lvl": 77,
+    "monsters": [
+      "Świątynny kucharz",
+      "Kawał chłopa",
+      "Nadęty dryblas",
+      "Magazynier z halabardą",
+      "Wytatuowany osiłek",
+      "Łowca Skór (elita 77lvl)",
+      "Zarządca magazynu (elita 77lvl)"
+    ],
+    "maps": [
+      "Świątynia Andarum - magazyn p.1",
+      "Świątynia Andarum - magazyn p.2",
+      "Świątynia Andarum - zbrojownia"
+    ]
+  },
+  {
+    "id": 33,
+    "name": "erem",
+    "lvl": 80,
+    "monsters": [
+      "Przerażający mnich",
+      "Śmierć magazyniera",
+      "Duchowy rozpruwacz",
+      "Kościste straszydło",
+      "Mnich chybione zaklęcie",
+      "Mnich Czarnego Uroku (elita 80lvl)",
+      "Duchowy Pożeracz (elita 80lvl)"
+    ],
+    "maps": [
+      "Erem Czarnego Słońca p.1 - północ",
+      "Erem Czarnego Słońca p.2",
+      "Erem Czarnego Słońca p.3",
+      "Erem Czarnego Słońca p.4 - sala 1",
+      "Erem Czarnego Słońca p.4 - sala 2",
+      "Erem Czarnego Słońca p.3 - południe",
+      "Erem Czarnego Słońca p.5"
+    ]
+  },
+  {
+    "id": 34,
+    "name": "minotaury",
+    "lvl": 81,
+    "monsters": [
+      "Minotaur",
+      "Minotaur wojownik",
+      "Berog Astron (elita 88lvl)"
+    ],
+    "maps": [
+      "Pieczara Czaszek",
+      "Labirynt Wyklętych p.1",
+      "Labirynt Wyklętych p.2 - sala 1",
+      "Labirynt Wyklętych p.2 - sala 2"
+    ]
+  },
+  {
+    "id": 35,
+    "name": "dławiciele",
+    "lvl": 83,
+    "monsters": [
+      "Dławiciel jaskiniowy",
+      "Szary dławiciel"
+    ],
+    "maps": [
+      "Wylęgarnia Choukkerów p.1",
+      "Wylęgarnia Choukkerów p.2",
+      "Wylęgarnia Choukkerów p.3"
+    ]
+  },
+  {
+    "id": 36,
+    "name": "miśki",
+    "lvl": 83,
+    "monsters": [
+      "Niedźwiedziołak",
+      "Purpurowy włochacz",
+      "Lodowy włochacz"
+    ],
+    "maps": [
+      "Firnowa Grota p.1",
+      "Firnowa Grota p.2",
+      "Lodowa Wyrwa p.1 s.1",
+      "Lodowa Wyrwa p.1 s.2",
+      "Lodowa Wyrwa p.2",
+      "Sala Lodowych Iglic",
+      "Firnowa Grota p.2 s.1"
+    ]
+  },
+  {
+    "id": 37,
+    "name": "wermonty",
+    "lvl": 85,
+    "monsters": [
+      "Wermont",
+      "Kornid jaskiniowy",
+      "Wermont Pluskokwik",
+      "Wermont Pokwas",
+      "Kornid szkarłatny"
+    ],
+    "maps": [
+      "Zdradzieckie Przejście p.2"
+    ]
+  },
+  {
+    "id": 38,
+    "name": "krasnoludy",
+    "lvl": 86,
+    "monsters": [
+      "Krasnoludzki górnik",
+      "Krasnoludzki strażnik",
+      "Krasnoludzki kowal",
+      "Krasnoludzki wojownik"
+    ],
+    "maps": [
+      "Labirynt Margorii",
+      "Kopalnia Margorii",
+      "Margoria",
+      "Margoria - Sala Królewska"
+    ]
+  },
+  {
+    "id": 39,
+    "name": "darhouny",
+    "lvl": 87,
+    "monsters": [
+      "Zdeformowany darhoun",
+      "Jaskiniowa przeraza",
+      "Przeklęty ogar"
+    ],
+    "maps": [
+      "Szyb Zdrajców",
+      "Ślepe Wyrobisko"
+    ]
+  },
+  {
+    "id": 40,
+    "name": "grexy",
+    "lvl": 89,
+    "monsters": [
+      "Grex",
+      "Volmat",
+      "Urgrap"
+    ],
+    "maps": [
+      "Grota Samotnych Dusz p.1",
+      "Grota Samotnych Dusz p.2",
+      "Grota Samotnych Dusz p.3",
+      "Grota Samotnych Dusz p.3 - sala wyjściowa",
+      "Grota Samotnych Dusz p.4",
+      "Grota Samotnych Dusz p.5",
+      "Grota Samotnych Dusz p.6"
+    ]
+  },
+  {
+    "id": 41,
+    "name": "leszy",
+    "lvl": 91,
+    "monsters": [
+      "Opiekun lasu",
+      "Leszy",
+      "Dziad borowy"
+    ],
+    "maps": [
+      "Liściaste Rozstaje",
+      "Sosnowe Odludzie",
+      "Księżycowe Wzniesienie",
+      "Zapomniany Święty Gaj p.1",
+      "Zapomniany Święty Gaj p.2",
+      "Zapomniany Święty Gaj p.3",
+      "Zapomniany Święty Gaj p.1 - sala 1"
+    ]
+  },
+  {
+    "id": 42,
+    "name": "Wieczornice i Południce",
+    "lvl": 92,
+    "monsters": [
+      "Południca",
+      "Wieczornica"
+    ],
+    "maps": [
+      "Trupia Przełęcz",
+      "Kamienna Strażnica - wsch. baszta skalna sala p.1",
+      "Kamienna Strażnica - wsch. baszta zasypany tunel",
+      "Kamienna Strażnica - wsch. baszta skalna sala p.0",
+      "Kamienna Strażnica - tunel",
+      "Kamienna Strażnica - Sala Chwały",
+      "Kamienna Strażnica - Sanktuarium",
+      "Kamienna Strażnica - zach. baszta p.1",
+      "Kamienna Strażnica - zach. baszta p.2",
+      "Mglista Polana Vesy",
+      "Wzgórze Płaczek",
+      "Płacząca Grota p.1 - sala 1",
+      "Płacząca Grota p.1 - sala 2",
+      "Płacząca Grota p.2",
+      "Płacząca Grota p.3",
+      "Płacząca Grota - sala Lamentu"
+    ]
+  },
+  {
+    "id": 43,
+    "name": "błotniste gady",
+    "lvl": 94,
+    "monsters": [
+      "Żółw skórzasty",
+      "Żółw drapieżny",
+      "Krokodyl",
+      "Aligator",
+      "Gawial"
+    ],
+    "maps": [
+      "Złowrogie Bagna",
+      "Gadzia Kotlina"
+    ]
+  },
+  {
+    "id": 44,
+    "name": "gnomy",
+    "lvl": 94,
+    "monsters": [
+      "Młody gnom leśny",
+      "Leśny gnom",
+      "Starszy gnom leśny"
+    ],
+    "maps": [
+      "Złowrogie Bagna",
+      "Gadzia Kotlina",
+      "Mglista Polana Vesy",
+      "Wzgórze Płaczek",
+      "Zagrzybiałe Ścieżki p.1 - sala 1",
+      "Zagrzybiałe Ścieżki p.1 - sala 2",
+      "Zagrzybiałe Ścieżki p.1 - sala 3",
+      "Zagrzybiałe Ścieżki p.2",
+      "Zagrzybiałe Ścieżki p.3"
+    ]
+  },
+  {
+    "id": 45,
+    "name": "ogniki",
+    "lvl": 96,
+    "monsters": [
+      "Błędne ogniki",
+      "Zwodniczy płomień"
+    ],
+    "maps": [
+      "Złowrogie Bagna",
+      "Gadzia Kotlina"
+    ]
+  },
+  {
+    "id": 46,
+    "name": "centaury",
+    "lvl": 98,
+    "monsters": [
+      "Centaur łowca",
+      "Centaur łucznik",
+      "Centaur tropiciel",
+      "Centaur zwiadowca",
+      "Centaur wojownik",
+      "Centaur obrońca"
+    ],
+    "maps": [
+      "Błędny Szlak",
+      "Zawiły Bór",
+      "Iglaste Ścieżki",
+      "Selva Oscura",
+      "Dolina Centaurów"
+    ]
+  },
+  {
+    "id": 47,
+    "name": "małe gady i płazy",
+    "lvl": 99,
+    "monsters": [
+      "Salamandra zielona",
+      "Salamandra ognista",
+      "Salamandra plamista",
+      "Młody kameleon",
+      "Kameleon",
+      "Salamandra nadrzewna",
+      "Salamandra rdzawa",
+      "Salamandra górska"
+    ],
+    "maps": [
+      "Selva Oscura",
+      "Ostępy Szalbierskich Lasów"
+    ]
+  },
+  {
+    "id": 48,
+    "name": "bandyci",
+    "lvl": 100,
+    "monsters": [
+      "Sprytny bandzior",
+      "Cwany bandyta",
+      "Celne oko",
+      "Łowca naiwniaków",
+      "Rudy twardziel"
+    ],
+    "maps": [
+      "Cienisty Bór",
+      "Las Dziwów",
+      "Ostępy Szalbierskich Lasów"
+    ]
+  },
+  {
+    "id": 49,
+    "name": "mykonidy",
+    "lvl": 102,
+    "monsters": [
+      "Trujący mykonid",
+      "Magiczny mykonid",
+      "Lodowy mykonid"
+    ],
+    "maps": [
+      "Śnieżna Grota p.2",
+      "Śnieżna Grota p.3",
+      "Lodowa Sala",
+      "Przejście Lodowatego Wiatru",
+      "Sala Lodowatego Wiatru",
+      "Przejście Magicznego Mrozu",
+      "Sala Magicznego Mrozu",
+      "Przejście Zamarzniętych Kości",
+      "Sala Zamarzniętych Kości"
+    ]
+  },
+  {
+    "id": 50,
+    "name": "molochy",
+    "lvl": 103,
+    "monsters": [
+      "Nieuzbrojony moloch",
+      "Oprawca niewinnych",
+      "Pożeracz niewiniątek",
+      "Istota wojny",
+      "Mistrz ostrego cięcia"
+    ],
+    "maps": [
+      "Podziemia Zniszczonej Wieży p.2",
+      "Podziemia Zniszczonej Wieży p.3",
+      "Podziemia Zniszczonej Wieży p.4",
+      "Podziemia Zniszczonej Wieży p.5"
+    ]
+  },
+  {
+    "id": 51,
+    "name": "Dwugłowe olbrzymy",
+    "lvl": 105,
+    "monsters": [
+      "Goliatog",
+      "Zurlorog",
+      "Barimnog"
+    ],
+    "maps": [
+      "Smocze Góry",
+      "Smocza Jaskinia",
+      "Przełaz olbrzymów",
+      "Selva Oscura"
+    ]
+  },
+  {
+    "id": 52,
+    "name": "Gady i płazy",
+    "lvl": 106,
+    "monsters": [
+      "Żmija zygzakowata",
+      "Jadowita ropucha",
+      "Zielona żmija zygzakowata",
+      "Wąż wodny",
+      "Turkusowa ropucha",
+      "Olbrzymia jadowita ropucha",
+      "Wąż zbożowy",
+      "Niebieska żmija zygzakowata",
+      "Wąż falisty",
+      "Wąż kopalniany",
+      "Wąż prądowy",
+      "Kumak górski",
+      "Krwiopijcza ropucha"
+    ],
+    "maps": [
+      "Solny Szyb p.3",
+      "Zabłocona Jama p.1 - sala 1",
+      "Zabłocona Jama p.1 - sala 2",
+      "Zabłocona Jama p.2 - sala 1",
+      "Zabłocona Jama p.2 - sala 3"
+    ]
+  },
+  {
+    "id": 53,
+    "name": "blotniste-istoty",
+    "lvl": 107,
+    "monsters": [
+      "Błotniak",
+      "Żywa fałda",
+      "Kamienny zwał"
+    ],
+    "maps": [
+      "Zabłocona Jama p.1 - sala 1",
+      "Zabłocona Jama p.1 - sala 2",
+      "Zabłocona Jama p.2 - sala 1",
+      "Zabłocona Jama p.2 - sala 2",
+      "Zabłocona Jama p.2 - sala 3",
+      "Zabłocona Jama p.2 - Sala Błotnistych Odmętów",
+      "Zabłocona Jama p.2 - Sala Duszącej Stęchlizny",
+      "Zabłocona Jama p.2 - Sala Magicznego Błota"
+    ]
+  },
+  {
+    "id": 54,
+    "name": "alghule",
+    "lvl": 111,
+    "monsters": [
+      "Alghul",
+      "Alghulinia",
+      "Alghul wojownik",
+      "Alghul łucznik"
+    ],
+    "maps": [
+      "Skalne Cmentarzysko p.1",
+      "Skalne Cmentarzysko p.2",
+      "Skalne Cmentarzysko p.3",
+      "Skalne Cmentarzysko p.4"
+    ]
+  },
+  {
+    "id": 55,
+    "name": "szkielety-koty",
+    "lvl": 111,
+    "monsters": [
+      "Groźna lwica",
+      "Piaskowy tygrys",
+      "Sępi Rozpruwacz",
+      "Szkielet rycerza",
+      "Groźny lew",
+      "Pustynny szakal",
+      "Szkarłatny rycerz",
+      "Szkielet łucznika",
+      "Nieumarły krzyżowiec (elita 112lvl)"
+    ],
+    "maps": [
+      "Sucha Dolina",
+      "Płaskowyż Arpan",
+      "Pustkowia Pogrzebanych",
+      "Grobowiec Nieznających Spokoju"
+    ]
+  },
+  {
+    "id": 56,
+    "name": "mumie",
+    "lvl": 114,
+    "monsters": [
+      "Scarabeaus Nangar",
+      "Scarabeaus Gir-tab",
+      "Scarabeaus Zihanitum",
+      "Chodzące truchło",
+      "Cheperu",
+      "Mumia wysokiego kapłana",
+      "Piaskowe chuchro",
+      "Zasuszony legionista",
+      "Zabandażowany zwiadowca",
+      "Antyczny wojownik (elita 114lvl)",
+      "Zabalsamowany wyznawca Seta (elita 114lvl)"
+    ],
+    "maps": [
+      "Oaza Siedmiu Wichrów",
+      "Złote Piaski",
+      "Ruiny Pustynnych Burz",
+      "Ciche Rumowiska",
+      "Dolina Suchych Łez",
+      "Piramida Pustynnego Władcy p.1",
+      "Piramida Pustynnego Władcy p.2",
+      "Piramida Pustynnego Władcy p.3"
+    ]
+  },
+  {
+    "id": 57,
+    "name": "kałamarnice",
+    "lvl": 118,
+    "monsters": [
+      "Srebrna ośmiornica",
+      "Zguba marynarzy",
+      "Postrach plaż",
+      "Skażona kałamarnica",
+      "Wielka macka (elita 118lvl)"
+    ],
+    "maps": [
+      "Archipelag Bremus An",
+      "Jama Morskiej Macki p.1 - sala 1",
+      "Jama Morskiej Macki p.1 - sala 2",
+      "Jama Morskiej Macki p.1 - sala 3"
+    ]
+  },
+  {
+    "id": 58,
+    "name": "Ingotia",
+    "lvl": 121,
+    "monsters": [
+      "Rogogłowy fechmistrz",
+      "Rozjuszony minotaur",
+      "Obrońca wyspy",
+      "Rogogłowy zawadiaka",
+      "Biały strzelec",
+      "Rogogłowy kusznik"
+    ],
+    "maps": [
+      "Wyspa Ingotia",
+      "Korytarze Wygnańców p.1 - Sala Ech",
+      "Korytarze Wygnańców p.1 - Jaskinia Zagubionych",
+      "Korytarze Wygnańców p.1 - Bezdenne Przepaści",
+      "Korytarze Wygnańców p.1 - Komora Opuszczonych",
+      "Korytarze Wygnańców p.1 - Hala Odszczepieńców",
+      "Korytarze Wygnańców p.1 - Sala Szlachetnych",
+      "Korytarze Wygnańców p.2 - Sala Żądzy",
+      "Korytarze Wygnańców p.2 - Komora Budowniczego",
+      "Korytarze Wygnańców p.2 - Komnata Wygnańców",
+      "Korytarze Wygnańców p.3 - Komnata Przeklętego Daru",
+      "Twierdza Rogogłowych - Sala Byka"
+    ]
+  },
+  {
+    "id": 59,
+    "name": "kraby",
+    "lvl": 122,
+    "monsters": [
+      "Krab wełnistoszczypcy",
+      "Krab olbrzymi"
+    ],
+    "maps": [
+      "Wyspa Rem",
+      "Opuszczony statek - pokład pod rufą"
+    ]
+  },
+  {
+    "id": 60,
+    "name": "Caneum",
+    "lvl": 124,
+    "monsters": [
+      "Marionetka demiurga",
+      "Gliniana kukiełka",
+      "Ziemisty narwaniec",
+      "Iłowy potwór",
+      "Gliniany golem",
+      "Demiurg cretula (elita 125lvl)",
+      "Demiurg lutum (elita 125lvl)",
+      "Demiurg argilla (elita 125lvl)"
+    ],
+    "maps": [
+      "Wyspa Caneum",
+      "Piaskowa Pułapka p.1 - sala 1",
+      "Piaskowa Pułapka p.1 - sala 2",
+      "Piaskowa Pułapka p.1 - sala 3",
+      "Piaskowa Pułapka p.1 - sala 4",
+      "Piaskowa Pułapka - Grota Piaskowej Śmierci"
+    ]
+  },
+  {
+    "id": 61,
+    "name": "magradit",
+    "lvl": 127,
+    "monsters": [
+      "Palisandrowy skorpion",
+      "Skorpion palącego jadu",
+      "Zjadliwy skorpion",
+      "Skorpion świętego ognia",
+      "Feniks",
+      "Żelazowy skorpion",
+      "Marid (elita 127lvl)"
+    ],
+    "maps": [
+      "Wyspa Magradit",
+      "Wulkan Politraki p.1 - sala 1",
+      "Wulkan Politraki p.1 - sala 2",
+      "Wulkan Politraki p.1 - sala 3",
+      "Wulkan Politraki p.2 - sala 1",
+      "Wulkan Politraki p.2 - sala 2"
+    ]
+  },
+  {
+    "id": 62,
+    "name": "wraki",
+    "lvl": 127,
+    "monsters": [
+      "Szkielet pirata",
+      "Potępiony łowca",
+      "Przeklęty szkielet",
+      "Szkielet bosmana (elita 130lvl)"
+    ],
+    "maps": [
+      "Wyspa Wraków",
+      "Wrak statku",
+      "Grota Trzeszczących Kości p.1 - sala 1",
+      "Grota Trzeszczących Kości p.1 - sala 2"
+    ]
+  },
+  {
+    "id": 63,
+    "name": "pajaki",
+    "lvl": 129,
+    "monsters": [
+      "Cichy zabójca",
+      "Plujący truciciel",
+      "Nocny skrytobójca"
+    ],
+    "maps": [
+      "Szlak Thorpa p.1",
+      "Szlak Thorpa p.2",
+      "Szlak Thorpa p.3",
+      "Szlak Thorpa p.4",
+      "Szlak Thorpa p.5",
+      "Szlak Thorpa p.6"
+    ]
+  },
+  {
+    "id": 64,
+    "name": "piraci",
+    "lvl": 130,
+    "monsters": [
+      "Bezduszna piratka",
+      "Bezwzględny pirat",
+      "Krnąbrny pirat",
+      "Niemiłosierny pirat"
+    ],
+    "maps": [
+      "Korsarska Nora - sala 1",
+      "Korsarska Nora - sala 2",
+      "Korsarska Nora - sala 3",
+      "Korsarska Nora - sala 4",
+      "Korsarska Nora - sala 5",
+      "Korsarska Nora - sala 6",
+      "Korsarska Nora - zachodni przełaz",
+      "Korsarska Nora - wschodni przełaz",
+      "Korsarska Nora - statek",
+      "Ukryta Grota Morskich Diabłów",
+      "Ukryta Grota Morskich Diabłów - skarbiec",
+      "Ukryta Grota Morskich Diabłów - siedziba",
+      "Ukryta Grota Morskich Diabłów - arsenał",
+      "Ukryta Grota Morskich Diabłów - korytarz",
+      "Ukryta Grota Morskich Diabłów - magazyn"
+    ]
+  },
+  {
+    "id": 65,
+    "name": "piaskowi niewolnicy",
+    "lvl": 133,
+    "monsters": [
+      "Notos",
+      "Boreasz",
+      "Zefir",
+      "Apeliotes",
+      "Anemoi (elita 135lvl)"
+    ],
+    "maps": [
+      "Dolina Pustynnych Kręgów",
+      "Piachy Zniewolonych",
+      "Ruchome Piaski",
+      "Piaskowa Gęstwina",
+      "Piaszczysta Grota p.1 - sala 1",
+      "Piaszczysta Grota p.1 - sala 2"
+    ]
+  },
+  {
+    "id": 66,
+    "name": "korredy",
+    "lvl": 134,
+    "monsters": [
+      "Korred wojownik",
+      "Korred zbrojny",
+      "Korred czterołapy"
+    ],
+    "maps": [
+      "Kopalnia Żółtego Kruszcu p.1 - sala 1",
+      "Kopalnia Żółtego Kruszcu p.1 - sala 2",
+      "Kopalnia Żółtego Kruszcu p.2 - sala 1",
+      "Kopalnia Żółtego Kruszcu p.2 - sala 2"
+    ]
+  },
+  {
+    "id": 67,
+    "name": "impy",
+    "lvl": 136,
+    "monsters": [
+      "Imp sługa",
+      "Rogaty pomiot",
+      "Jaskiniowy zgrywus",
+      "Piekielne licho",
+      "Wybraniec płomieni"
+    ],
+    "maps": [
+      "Chodniki Mrinding",
+      "Chodniki Mrinding p.1 - sala 1",
+      "Chodniki Mrinding p.1 - sala 2",
+      "Chodniki Mrinding p.2 - sala 1",
+      "Chodniki Mrinding p.2 - sala 2"
+    ]
+  },
+  {
+    "id": 68,
+    "name": "ognie",
+    "lvl": 137,
+    "monsters": [
+      "Żywy ogień trwogi",
+      "Żywy ogień",
+      "Piekielny żar"
+    ],
+    "maps": [
+      "Ścieżki Erebeth p.2 - sala 1",
+      "Ścieżki Erebeth p.2 - sala 2",
+      "Ścieżki Erebeth p.3",
+      "Ognista Studnia p.1"
+    ]
+  },
+  {
+    "id": 69,
+    "name": "ogniste golemy",
+    "lvl": 138,
+    "monsters": [
+      "Magmowy golem",
+      "Wulkaniczny golem",
+      "Golem magmowa łapa",
+      "Golem władca lawy (elita 139lvl)"
+    ],
+    "maps": [
+      "Kuźnia Worundriela p.1",
+      "Kuźnia Worundriela p.2",
+      "Kuźnia Worundriela p.3",
+      "Kuźnia Worundriela - Komnata Żaru",
+      "Ognista Studnia p.2",
+      "Ognista Studnia p.3"
+    ]
+  },
+  {
+    "id": 70,
+    "name": "ważki",
+    "lvl": 140,
+    "monsters": [
+      "Pożognica księżycowa",
+      "Pożognica tląca",
+      "Pożognica rubinowa",
+      "Monstrualna łunka piżmowa (elita 141lvl)",
+      "Monstrualna łunka ognista (elita 141lvl)"
+    ],
+    "maps": [
+      "Jezioro Ważek"
+    ]
+  },
+  {
+    "id": 71,
+    "name": "gorale",
+    "lvl": 143,
+    "monsters": [
+      "Stary dziad",
+      "Mistrz ciupagi",
+      "Góralski parobek",
+      "Łowczyni fretek",
+      "Mlody juhas",
+      "Góralski rozbójnik",
+      "Dobra żona",
+      "Strażnik piwa",
+      "Poganiacz owiec",
+      "Hanka patelnianka (elita 142lvl)",
+      "Mistrz oscypków (elita 143lvl)"
+    ],
+    "maps": [
+      "Wyjący Wąwóz",
+      "Babi Wzgórek",
+      "Góralskie Przejście",
+      "Wyjąca Jaskinia",
+      "Góralska Pieczara p.1",
+      "Góralska Pieczara p.2",
+      "Góralska Pieczara p.3",
+      "Chata wójta Fistuły"
+    ]
+  },
+  {
+    "id": 72,
+    "name": "berserkerzy",
+    "lvl": 147,
+    "monsters": [
+      "Berserker Murro",
+      "Berserker Ahin",
+      "Berserker Thruta",
+      "Berserker Kohta",
+      "Berserker Hlomer",
+      "Berserker Rokh",
+      "Berserker Grilull (elita 146lvl)",
+      "Berserker Okel (elita 147lvl)"
+    ],
+    "maps": [
+      "Opuszczona Twierdza",
+      "Czarcie Oparzeliska",
+      "Grobowiec Przodków",
+      "Zaginiona Dolina",
+      "Śnieżna Granica",
+      "Mała Twierdza - sala wejściowa",
+      "Mała Twierdza - sala główna",
+      "Mała Twierdza p.1",
+      "Mała Twierdza - korytarz zachodni",
+      "Mała Twierdza - mury zachodnie",
+      "Mała Twierdza - wieża zachodnia",
+      "Mała Twierdza - mury wschodnie",
+      "Mała Twierdza - wieża wschodnia",
+      "Mała Twierdza - magazyn",
+      "Mała Twierdza - mały barak",
+      "Mała Twierdza - wieża strażnicza",
+      "Mała Twierdza - podziemny magazyn",
+      "Cenotaf Berserkerów - przejście przodków",
+      "Cenotaf Berserkerów p.1 - sala 1",
+      "Cenotaf Berserkerów p.1 - sala 2"
+    ]
+  },
+  {
+    "id": 73,
+    "name": "duchy",
+    "lvl": 149,
+    "monsters": [
+      "Upiór w cylindrze",
+      "Przeklęta hrabina",
+      "Potępiona markiza",
+      "Duch arystokraty",
+      "Prześwitujący baron",
+      "Wystrojone widmo",
+      "Upadły Lord (elita 152lvl)",
+      "Biała Dama (elita 152lvl)"
+    ],
+    "maps": [
+      "Korytarze Milczących Intryg p.1",
+      "Korytarze Milczących Intryg p.2 - sala 1",
+      "Korytarze Milczących Intryg p.2 - sala 2",
+      "Korytarze Milczących Intryg p.3",
+      "Sala Ukrytych Paktów"
+    ]
+  },
+  {
+    "id": 74,
+    "name": "mechaniczne gobliny",
+    "lvl": 151,
+    "monsters": [
+      "Krogin Tektus",
+      "Boltor Grex",
+      "Rotgot Megakus",
+      "Ziblet Goons",
+      "Tekmo Zinsus",
+      "Tektor Vorn",
+      "Pixel Zorn"
+    ],
+    "maps": [
+      "Lokum Złych Goblinów - wieża",
+      "Lokum Złych Goblinów - zejście p.1",
+      "Lokum Złych Goblinów p.2 - sala 1",
+      "Lokum Złych Goblinów p.2 - sala 2",
+      "Lokum Złych Goblinów - warsztat",
+      "Lokum Złych Goblinów p.3 - sala 1",
+      "Lokum Złych Goblinów p.3 - sala 2"
+    ]
+  },
+  {
+    "id": 75,
+    "name": "dusze",
+    "lvl": 152,
+    "monsters": [
+      "Duch próżności",
+      "Dusza Potępionego Wojownika",
+      "Dusza Wiecznego Romantyka",
+      "Duch zazdrości",
+      "Duch nienawiści",
+      "Dusza Wiernego Strażnika"
+    ],
+    "maps": [
+      "Upiorna Droga"
+    ]
+  },
+  {
+    "id": 76,
+    "name": "wiedzmy",
+    "lvl": 154,
+    "monsters": [
+      "Potępiona Wiedźma",
+      "Wiedźma Ple-Ple",
+      "Stara Wiedźma",
+      "Latająca Wiedźma",
+      "Opętana Wiedźma",
+      "Upadła Wiedźma"
+    ],
+    "maps": [
+      "Wiedźmie Kotłowisko",
+      "Sabatowe Góry",
+      "Tristam",
+      "Splądrowana kaplica",
+      "Ograbiona świątynia",
+      "Splugawiona kaplica",
+      "Dom Atalii",
+      "Opuszczone więzienie",
+      "Dom Amry",
+      "Dom Adariel",
+      "Dom starej czarownicy",
+      "Dom czarnej magii",
+      "Magazyn mioteł",
+      "Lochy Tristam",
+      "Laboratorium Adariel"
+    ]
+  },
+  {
+    "id": 77,
+    "name": "czerwoni orkowie",
+    "lvl": 156,
+    "monsters": [
+      "Karminowy Watażka",
+      "Obrońca Granic",
+      "Adept Orczej Magii",
+      "Ork Waleczny Młot",
+      "Czerwonoskóry Wojownik",
+      "Zakapturzony Ork Warlock",
+      "Pogromca Wątpliwych (elita 158lvl)"
+    ],
+    "maps": [
+      "Orcza Wyżyna",
+      "Osada Czerwonych Orków",
+      "Kurhany Zwyciężonych",
+      "Grota Orczych Szamanów p.1 s.1",
+      "Grota Orczych Szamanów p.1 s.2",
+      "Grota Orczych Szamanów p.2 s.1",
+      "Grota Orczych Szamanów p.2 s.2",
+      "Grota Orczej Hordy p.1 s.1",
+      "Grota Orczej Hordy p.1 s.2",
+      "Grota Orczej Hordy p.2 s.1",
+      "Grota Orczej Hordy p.2 s.2",
+      "Grota Orczej Hordy p.2 s.3"
+    ]
+  },
+  {
+    "id": 78,
+    "name": "dziki zagajnik",
+    "lvl": 161,
+    "monsters": [
+      "Hydra piaskowa",
+      "Hydra turkusowa",
+      "Hydra rzeczna",
+      "Hydra kamienna",
+      "Mantikora",
+      "Gryf"
+    ],
+    "maps": [
+      "Ukryty Kanion",
+      "Dziki Zagajnik",
+      "Skały Pamięci Nikantosa",
+      "Przełęcz Krwistego Posłańca",
+      "Przepaść Aguti"
+    ]
+  },
+  {
+    "id": 79,
+    "name": "kazamaty",
+    "lvl": 163,
+    "monsters": [
+      "Żywe Kości Praorka",
+      "Królewski Praszaman",
+      "Łowca Dusz",
+      "Praorczy Herod",
+      "Zjawa z Nawiedzonych Kazamat",
+      "Widmo Przeszłości",
+      "Duch Pradawnego Egzekutora (elita 164lvl)"
+    ],
+    "maps": [
+      "Nawiedzone Komnaty - przedsionek",
+      "Nawiedzone Kazamaty p.1 s.1",
+      "Nawiedzone Kazamaty p.1 s.2",
+      "Nawiedzone Kazamaty p.2 s.1",
+      "Nawiedzone Kazamaty p.2 s.2",
+      "Nawiedzone Kazamaty p.3 s.1",
+      "Nawiedzone Kazamaty p.3 s.2",
+      "Nawiedzone Kazamaty p.4"
+    ]
+  },
+  {
+    "id": 80,
+    "name": "komnaty",
+    "lvl": 170,
+    "monsters": [
+      "Pradawny Mistrz Miecza",
+      "Szara Strzała",
+      "Pradawny Ork Warlock",
+      "Tropiciel Smoków",
+      "Niszczyciel Czaszek",
+      "Nestor Praorczej Magii",
+      "Czarny Gwardzista",
+      "Pradawny Halabardzista",
+      "Obrońca Czarnej Perły",
+      "Wysłużony Wiarus",
+      "Strażnik Przyboczny (elita 168lvl)",
+      "Profos Czarnej Gwardii (elita 173lvl)"
+    ],
+    "maps": [
+      "Nawiedzone Komnaty - przedsionek",
+      "Sala Dowódcy Orków",
+      "Nawiedzone Komnaty - zachód",
+      "Nawiedzone Komnaty - wschód",
+      "Sala Rady Orków",
+      "Sala Królewska",
+      "Komnaty Czarnej Gwardii - zachód",
+      "Komnaty Czarnej Gwardii - wschód",
+      "Komnata Czarnej Perły"
+    ]
+  },
+  {
+    "id": 81,
+    "name": "kryształowa grota",
+    "lvl": 174,
+    "monsters": [
+      "Ożywiona zmarzlina",
+      "Oszroniona skała",
+      "Czerwonooka skała",
+      "Żółtooka skała",
+      "Tealowooka skała",
+      "Lodowy golem",
+      "Nimfa mrozu",
+      "Nimfa chłodu",
+      "Rubinowy golem",
+      "Cytrynowy golem",
+      "Ametystowy golem",
+      "Turkusowy golem",
+      "Zamarznięty strażnik królowej",
+      "Profos lodowej gwardii",
+      "Szafirowy brodacz",
+      "Patronka szronu (elita 175lvl)"
+    ],
+    "maps": [
+      "Kryształowa Grota - przepaść",
+      "Kryształowa Grota p.1",
+      "Kryształowa Grota p.2 - sala 1",
+      "Kryształowa Grota p.2 - sala 2",
+      "Kryształowa Grota - Sala Smutku",
+      "Kryształowa Grota p.3 - sala 1",
+      "Kryształowa Grota p.3 - sala 2",
+      "Kryształowa Grota p.4",
+      "Kryształowa Grota p.5",
+      "Kryształowa Grota p.6"
+    ]
+  },
+  {
+    "id": 82,
+    "name": "driady",
+    "lvl": 178,
+    "monsters": [
+      "Łowczyni Insektów",
+      "Poranna Rosa",
+      "Strażniczka Darów Lasu",
+      "Leśny Wiatr",
+      "Ciernista Strzała",
+      "Ożywiony Pień",
+      "Patronka Żywicznej Magii",
+      "Opiekunka Potoków",
+      "Bijąca Wierzba",
+      "Władczyni Łąk",
+      "Fantom Kniei",
+      "Córa Dębu (elita 177lvl)"
+    ],
+    "maps": [
+      "Ruiny Tass Zhil",
+      "Błota Sham Al",
+      "Głusza Świstu",
+      "Las Porywów Wiatru",
+      "Kwieciste Kresy",
+      "Drzewo Dusz p.1",
+      "Drzewo Dusz p.2",
+      "Grota Arbor s.1",
+      "Grota Arbor s.2"
+    ]
+  },
+  {
+    "id": 83,
+    "name": "ogry",
+    "lvl": 181,
+    "monsters": [
+      "Ogr Łamacz Kości",
+      "Miażdżyciel Czaszek",
+      "Rozpruwacz Trzewi",
+      "Okryst Czarny Rytuał",
+      "Ogr Ćwiartownik",
+      "Zielone Karczycho (elita 182lvl)"
+    ],
+    "maps": [
+      "Ogrza Kawerna p.1",
+      "Ogrza Kawerna p.2",
+      "Ogrza Kawerna p.3",
+      "Ogrza Kawerna p.4"
+    ]
+  },
+  {
+    "id": 84,
+    "name": "patrycjusze",
+    "lvl": 184,
+    "monsters": [
+      "Osamotniona patrycjuszka",
+      "Nieumarły patrycjusz",
+      "Opuszczony patrycjusz",
+      "Ożywione zwłoki",
+      "Bezsenny patrycjusz (elita 185lvl)",
+      "Madame Pompadour (elita 185lvl)"
+    ],
+    "maps": [
+      "Krypty Bezsennych p.1 s.1",
+      "Krypty Bezsennych p.1 s.2",
+      "Krypty Bezsennych p.2 s.1",
+      "Krypty Bezsennych p.2 s.2",
+      "Krypty Bezsennych p.3"
+    ]
+  },
+  {
+    "id": 85,
+    "name": "zmutowane rośliny",
+    "lvl": 187,
+    "monsters": [
+      "Urwigłówka",
+      "Ślinówka kwaśna",
+      "Szubieniczka wisząca",
+      "Mięsówka tyczkowa",
+      "Pąkówka zębata",
+      "Szponówka drapieżna",
+      "Wierciszka gniewna",
+      "Bezkiełka łaknąca",
+      "Urwigłówka trójgłowa (elita 188lvl)"
+    ],
+    "maps": [
+      "Kwieciste Przejście",
+      "Złudny Trakt",
+      "Zapomniana Ścieżyna",
+      "Głuchy Las",
+      "Ukwiecona Skarpa",
+      "Skarpa Trzech Słów"
+    ]
+  },
+  {
+    "id": 86,
+    "name": "draki",
+    "lvl": 189,
+    "monsters": [
+      "Postrach Thuzalczyków",
+      "Strzała Północy",
+      "Śnieżna Burza",
+      "Drak białych nocy",
+      "Zahartowana wartowniczka",
+      "Drak szczypiącego mrozu",
+      "Aragoth Władca Śnieżyc (elita 190lvl)",
+      "Wilcza Zamieć (elita 190lvl)"
+    ],
+    "maps": [
+      "Szczerba Samobójców",
+      "Przysiółek Valmirów",
+      "Śnieżna Granica",
+      "Śnieżycowy Las",
+      "Kwieciste Kresy"
+    ]
+  },
+  {
+    "id": 87,
+    "name": "mroczny las",
+    "lvl": 192,
+    "monsters": [
+      "Zdrewniały ogar",
+      "Ofiara wymuszonej symbiozy",
+      "Niewolnica pnączy",
+      "Waleczny pień",
+      "Więzień mrocznego lasu",
+      "Ściółkowe monstrum (elita 192lvl)"
+    ],
+    "maps": [
+      "Złudny Trakt",
+      "Zbocze Starych Bogów",
+      "Bezgwiezdna Gęstwina",
+      "Bór Zagubionych",
+      "Martwy Las",
+      "Ziemia Szepczących Cierni",
+      "Grota Skamieniałej Kory p.1 - sala 1",
+      "Grota Skamieniałej Kory p.1 - sala 2",
+      "Grota Skamieniałej Kory p.2",
+      "Starodrzew Przedwiecznych p.1",
+      "Starodrzew Przedwiecznych p.2"
+    ]
+  },
+  {
+    "id": 88,
+    "name": "myświóry",
+    "lvl": 196,
+    "monsters": [
+      "Zmutowane szczurzysko",
+      "Degustator szlamu",
+      "Mieszkaniec kanałów",
+      "Myświór Dziurka",
+      "Myświór Pała",
+      "Zwinny Ogon",
+      "Oczytany gryzoń",
+      "Szczurzy gwardzista",
+      "Myświór Byku (elita 197lvl)"
+    ],
+    "maps": [
+      "Kanały Nithal p.1 - sala 1",
+      "Kanały Nithal p.1 - sala 2",
+      "Kanały Nithal p.1 - sala 3",
+      "Szlamowe Kanały p.2 - sala 1",
+      "Szlamowe Kanały p.2 - sala 2",
+      "Szlamowe Kanały p.2 - sala 3"
+    ]
+  },
+  {
+    "id": 89,
+    "name": "hurysy",
+    "lvl": 199,
+    "monsters": [
+      "Hurysa Rapsolieta",
+      "Hurysa Lussien",
+      "Hurysa Patisja",
+      "Hurysa Nikolja",
+      "Hurysa Achajeta (elita 200lvl)"
+    ],
+    "maps": [
+      "Przedsionek Kultu",
+      "Mroczne Komnaty",
+      "Przerażające Sypialnie"
+    ]
+  },
+  {
+    "id": 90,
+    "name": "heretycy",
+    "lvl": 203,
+    "monsters": [
+      "Wtajemniczony Heretyk",
+      "Krwawy Wyznawca",
+      "Rozpruwacz Dziewic",
+      "Pogromca Myświórów",
+      "Opętany Heretyk",
+      "Podziemny Wartownik",
+      "Mistrz Rytuału",
+      "Heretyk Łowca Niewiast",
+      "Czciciel Demonów",
+      "Heretyk Wirtuoz Tortur",
+      "Obrońca Sekty",
+      "Demoniczny Strażnik (elita 205lvl)",
+      "Czarny Wdowiec (elita 205lvl)"
+    ],
+    "maps": [
+      "Tajemnicza Siedziba",
+      "Sala Spowiedzi Konających",
+      "Sala Tysiąca Świec",
+      "Lochy Kultu",
+      "Sale Rozdzierania",
+      "Korytarz Ostatnich Nadziei",
+      "Przejście Oczyszczenia",
+      "Sala Skaryfikacji Grzeszników"
+    ]
+  },
+  {
+    "id": 91,
+    "name": "furbole",
+    "lvl": 208,
+    "monsters": [
+      "Czarujący Furbol",
+      "Szaman Furboli",
+      "Furbol Tropiciel",
+      "Wojowniczy Furbol",
+      "Myśliwy Furbol",
+      "Zwiadowca Furboli",
+      "Potężny Furbol (elita 209lvl)"
+    ],
+    "maps": [
+      "Zapomniany Las",
+      "Rozległa Równina",
+      "Zalana Grota",
+      "Wzgórza Obłędu",
+      "Dolina Gniewu",
+      "Terytorium Furii",
+      "Zapadlisko Zniewolonych"
+    ]
+  },
+  {
+    "id": 92,
+    "name": "pająki",
+    "lvl": 212,
+    "monsters": [
+      "Lasiodora parahybana",
+      "Megaphobema mesomelas",
+      "Martwy rycerz Mietek",
+      "Nesticus morisii",
+      "Powykręcana Kugletta",
+      "Porrhomma convexum",
+      "Nesticus eremita",
+      "Bladolica Furiadetta",
+      "Ischyropsalis alpinula",
+      "Holostomon oreophilum",
+      "Meta menardi",
+      "Rozpruta Tempera",
+      "Phoneutria (elita 213lvl)"
+    ],
+    "maps": [
+      "Pajęczy Las",
+      "Arachnitopia p.1",
+      "Arachnitopia p.2",
+      "Arachnitopia p.3",
+      "Arachnitopia p.4",
+      "Arachnitopia p.5",
+      "Arachnitopia p.6",
+      "Zapadlisko Zniewolonych",
+      "Otchłań Pajęczych Sieci",
+      "Dolina Pajęczych Korytarzy"
+    ]
+  },
+  {
+    "id": 93,
+    "name": "drowy",
+    "lvl": 216,
+    "monsters": [
+      "Znawca ciemności",
+      "Kapłanka Rodu Milithor",
+      "Mistrzyni lepkiej przędzy",
+      "Pasterz ośmionogich",
+      "Tępicielka elfiej krwi",
+      "Strażniczka podziemnego miasta",
+      "Wyznawca pajęczej bogini (elita 217lvl)"
+    ],
+    "maps": [
+      "Zakazana Grota",
+      "Porzucone Noiridum p.2",
+      "Porzucone Noiridum p.3 - sala 1",
+      "Porzucone Noiridum p.3 - sala 2",
+      "Porzucone Noiridum p.3 - sala 3",
+      "Erem Aldiphrina",
+      "Dawny Przełaz"
+    ]
+  },
+  {
+    "id": 94,
+    "name": "dridery",
+    "lvl": 219,
+    "monsters": [
+      "Drider",
+      "Pajęczy kat",
+      "Ośmionogi fechmistrz",
+      "Rycerz podziemi",
+      "Krwiożerczy drider",
+      "Pan ciemności",
+      "Ponury sieciarz",
+      "Mroczny halabardzista",
+      "Wysłanniczka matrony (elita 220lvl)"
+    ],
+    "maps": [
+      "Dawny Przełaz",
+      "Zapomniane Sztolnie",
+      "Zamierzchłe Arterie p.2 - sala 1",
+      "Zamierzchłe Arterie p.2 - sala 2",
+      "Zamierzchłe Arterie p.3"
+    ]
+  },
+  {
+    "id": 95,
+    "name": "anuraki",
+    "lvl": 223,
+    "monsters": [
+      "Jesiotrzyc wąsaty",
+      "Pantherania rzeczna",
+      "Arval grzebieniasty",
+      "Boforan rogaty",
+      "Anurak rechotliwy",
+      "Krokozaur jasnobrzuchy (elita 225lvl)",
+      "Yaramaja krwiopijna (elita 225lvl)"
+    ],
+    "maps": [
+      "Pustkowia Pogrzebanych",
+      "Smocze Skalisko",
+      "Urwisko Vapora",
+      "Mglisty Las",
+      "Grząska Ziemia",
+      "Bagna Umarłych",
+      "Gnijące Topielisko",
+      "Dolina Pełznącego Krzyku",
+      "Zatrute Torfowiska"
+    ]
+  },
+  {
+    "id": 96,
+    "name": "maddoki",
+    "lvl": 227,
+    "monsters": [
+      "Silny aligator",
+      "Krokodyl różańcowy",
+      "Aligator rzeczny",
+      "Niegościnny krokodyl",
+      "Kajman czarny",
+      "Przyczajony maddok",
+      "Strażnik wodorostów",
+      "Zielonoskóry poławiacz",
+      "Oślizgły wojownik",
+      "Patron wodospadów",
+      "Smakosz świeżych ryb",
+      "Pancerny maddok (elita 229lvl)"
+    ],
+    "maps": [
+      "Zawodzące Kaskady",
+      "Strumienie Szemrzących Wód",
+      "Złota Dąbrowa",
+      "Dolina Potoku Śmierci",
+      "Skryty Azyl",
+      "Jaszczurze Korytarze p.1 - sala 1",
+      "Jaszczurze Korytarze p.1 - sala 2",
+      "Jaszczurze Korytarze p.1 - sala 3",
+      "Jaszczurze Korytarze p.1 - sala 4",
+      "Jaszczurze Korytarze p.2 - sala 1",
+      "Jaszczurze Korytarze p.2 - sala 2",
+      "Jaszczurze Korytarze p.2 - sala 3",
+      "Jaszczurze Korytarze p.2 - sala 4",
+      "Jaszczurze Korytarze p.2 - sala 5",
+      "Mechata Jama p.1",
+      "Mechata Jama p.2",
+      "Mechata Jama p.3",
+      "Nora Jaszczurzych Koszmarów p.1 - sala 1",
+      "Nora Jaszczurzych Koszmarów p.1 - sala 2",
+      "Grota Porośniętych Stalagmitów p.1 - sala 1",
+      "Grota Porośniętych Stalagmitów p.1 - sala 2",
+      "Grota Porośniętych Stalagmitów p.2 - sala 1",
+      "Grota Porośniętych Stalagmitów p.2 - sala 2"
+    ]
+  },
+  {
+    "id": 97,
+    "name": "zagrzybiony las",
+    "lvl": 232,
+    "monsters": [
+      "Koścista łania",
+      "Rogaty ponurak",
+      "Zainfekowane wilcze zwłoki",
+      "Szkielet porośnięty grzybem",
+      "Grzybowa marionetka",
+      "Niedźwiedź pełen zarodników",
+      "Przejęte ciało żubra",
+      "Ofiara grzybyfikacji (elita 234lvl)"
+    ],
+    "maps": [
+      "Gęste Sploty",
+      "Zmurszały Łęg",
+      "Garb Połamanych Konarów",
+      "Zalesiony Step",
+      "Zarosłe Szczeliny p.1 - sala 1",
+      "Zarosłe Szczeliny p.1 - sala 2",
+      "Zarosłe Szczeliny p.1 - sala 3",
+      "Gardziel Podgnitych Mchów p.1",
+      "Gardziel Podgnitych Mchów p.2",
+      "Gardziel Podgnitych Mchów p.3"
+    ]
+  },
+  {
+    "id": 98,
+    "name": "elgary",
+    "lvl": 236,
+    "monsters": [
+      "Lunarny lisek",
+      "Lunarna łania",
+      "Elgara",
+      "Lunarny wilk",
+      "Pani stukających kopyt",
+      "Wrogo nastawiona elgara",
+      "Leśna boginka",
+      "Czcicielka księżyca",
+      "Czarnowidzka",
+      "Księżycowy strażnik (elita 237lvl)"
+    ],
+    "maps": [
+      "Głusza Srebrnego Rogu",
+      "Knieja Lunarnych Głazów",
+      "Szepty Menhirów",
+      "Gaj Księżycowego Blasku",
+      "Zakątek Nocnych Szelestów",
+      "Zacienione Wnęki p.1 - sala 1",
+      "Zacienione Wnęki p.1 - sala 2",
+      "Zacienione Wnęki p.2 - sala 1",
+      "Zacienione Wnęki p.2 - sala 2",
+      "Nocna Pustelnia p.1",
+      "Nocna Pustelnia p.2"
+    ]
+  },
+  {
+    "id": 99,
+    "name": "drzewce",
+    "lvl": 239,
+    "monsters": [
+      "Kamienny Starodrzew",
+      "Kościodrzew",
+      "Paszczodendron",
+      "Rycerz Trzech Sęków",
+      "Bubalus (elita 240lvl)"
+    ],
+    "maps": [
+      "Urwisko Zdrewniałych",
+      "Wąwóz Zakorzenionych Dusz",
+      "Regiel Zabłąkanych",
+      "Źródło Zakorzenionego Ludu",
+      "Piaskowa Gęstwina",
+      "Jaskinia Korzennego Czaru p.1 - sala 1",
+      "Jaskinia Korzennego Czaru p.1 - sala 2",
+      "Jaskinia Korzennego Czaru p.1 - sala 3",
+      "Jaskinia Korzennego Czaru p.1 - sala 4",
+      "Jaskinia Korzennego Czaru p.2 - sala 1",
+      "Jaskinia Korzennego Czaru p.2 - sala 2",
+      "Jaskinia Korzennego Czaru p.3",
+      "Krzaczasta Grota p.1 - sala 1",
+      "Krzaczasta Grota p.1 - sala 2",
+      "Krzaczasta Grota p.1 - sala 3",
+      "Krzaczasta Grota p.2 - sala 1",
+      "Krzaczasta Grota p.2 - sala 2",
+      "Krzaczasta Grota p.2 - sala 3",
+      "Krzaczasta Grota - sala boczna",
+      "Krzaczasta Grota - korytarz"
+    ]
+  },
+  {
+    "id": 100,
+    "name": "bolity",
+    "lvl": 244,
+    "monsters": [
+      "Pesterni",
+      "Mutokli",
+      "Pancerna bolita",
+      "Szafirowa bolita",
+      "Nokturni",
+      "Jaskiniowa bolita",
+      "Cuetzpalli",
+      "Bojownik Słońca"
+    ],
+    "maps": [
+      "Dolina Chmur",
+      "Złota Góra p.1 - sala 1",
+      "Złota Góra p.1 - sala 2",
+      "Złota Góra p.1 - sala 3",
+      "Złota Góra p.1 - sala 4",
+      "Złota Góra p.2 - sala 1",
+      "Złota Góra p.2 - sala 2",
+      "Złota Góra p.2 - sala 3",
+      "Złota Góra p.2 - sala 4",
+      "Złota Góra p.3 - sala 1"
+    ]
+  },
+  {
+    "id": 101,
+    "name": "niecka",
+    "lvl": 248,
+    "monsters": [
+      "Bojownik Słońca",
+      "Tlamanih",
+      "Waleczny Jaguar",
+      "Otomi",
+      "Cuextacatl",
+      "Cuachic (elita 250lvl)"
+    ],
+    "maps": [
+      "Niecka Xiuh Atl",
+      "Oztotl Tzacua p.1 - sala 1",
+      "Oztotl Tzacua p.1 - sala 2",
+      "Oztotl Tzacua p.2 - sala 1",
+      "Oztotl Tzacua p.2 - sala 2",
+      "Oztotl Tzacua p.3 - sala 1",
+      "Oztotl Tzacua p.3 - sala 2",
+      "Oztotl Tzacua p.4 - sala 1",
+      "Oztotl Tzacua p.4 - sala 2",
+      "Oztotl Tzacua p.5",
+      "Chantli Cuaitla Citlalina",
+      "Chantli"
+    ]
+  },
+  {
+    "id": 102,
+    "name": "maho",
+    "lvl": 253,
+    "monsters": [
+      "Cuextacatl",
+      "Papalotl",
+      "Yaotlakatl",
+      "Kapłan Krwawej Ofiary",
+      "Teopixqui",
+      "Czciciel Quetzalcoatla (elita 255lvl)"
+    ],
+    "maps": [
+      "Altepetl Mahoptekan",
+      "Wschodni Mictlan p.1",
+      "Wschodni Mictlan p.2",
+      "Wschodni Mictlan p.3",
+      "Wschodni Mictlan p.4",
+      "Wschodni Mictlan p.5",
+      "Wschodni Mictlan p.6",
+      "Wschodni Mictlan p.7",
+      "Wschodni Mictlan p.8",
+      "Zachodni Mictlan p.1",
+      "Zachodni Mictlan p.2",
+      "Zachodni Mictlan p.3",
+      "Zachodni Mictlan p.4",
+      "Zachodni Mictlan p.5",
+      "Zachodni Mictlan p.6",
+      "Zachodni Mictlan p.7",
+      "Zachodni Mictlan p.8",
+      "Topan p.1",
+      "Topan p.2",
+      "Topan p.3",
+      "Topan p.4",
+      "Topan p.5",
+      "Topan p.6",
+      "Topan p.7",
+      "Topan p.8",
+      "Topan p.9",
+      "Topan p.10",
+      "Topan p.11",
+      "Topan p.12",
+      "Topan p.13"
+    ]
+  },
+  {
+    "id": 103,
+    "name": "wiedźmowe potwory",
+    "lvl": 258,
+    "monsters": [
+      "Ścierwica Mięsówka",
+      "Obwisła Prukwa",
+      "Odchodnica Cesarska",
+      "Zadzierzgnięta Haniebnica",
+      "Kapryśnica Gorejąca",
+      "Złośliwa Sekutnica",
+      "Szpon podziemnej istoty",
+      "Potworzak (elita 260lvl)"
+    ],
+    "maps": [
+      "Zachodnie Zbocze",
+      "Plugawe Pustkowie",
+      "Jęczywąwóz",
+      "Pogranicze Wisielców",
+      "Skalisty Styk",
+      "Zacisze Zimnych Wiatrów",
+      "Siedlisko Przyjemnej Woni",
+      "Siedlisko Przyjemnej Woni - źródło"
+    ]
+  },
+  {
+    "id": 104,
+    "name": "potępione zamczysko",
+    "lvl": 261,
+    "monsters": [
+      "Raszpla Ragana",
+      "Kąsająca Grymaśnica",
+      "Dokuczliwa Bździągwa",
+      "Rogata Rozkosznica",
+      "Posępna Czartolina",
+      "Oblubienica Płomieni",
+      "Prawa wiedźma (elita 262lvl)"
+    ],
+    "maps": [
+      "Potępione Zamczysko",
+      "Potępione Zamczysko - korytarz wejściowy",
+      "Potępione Zamczysko - lochy zachodnie p.1",
+      "Potępione Zamczysko - lochy wschodnie p.1",
+      "Potępione Zamczysko - sala ofiarna",
+      "Potępione Zamczysko - korytarz zachodni",
+      "Potępione Zamczysko - korytarz wschodni",
+      "Potępione Zamczysko - zachodnia komnata",
+      "Potępione Zamczysko - wschodnia komnata",
+      "Wieża Szlochów p.1",
+      "Wieża Szlochów p.2",
+      "Wieża Szlochów p.3",
+      "Potępione Zamczysko - łącznik zachodni",
+      "Potępione Zamczysko - łącznik wschodni",
+      "Potępione Zamczysko - północna komnata",
+      "Potępione Zamczysko - lochy zachodnie p.2",
+      "Potępione Zamczysko - lochy wschodnie p.2",
+      "Potępione Zamczysko - głębokie lochy"
+    ]
+  },
+  {
+    "id": 105,
+    "name": "tellary",
+    "lvl": 264,
+    "monsters": [
+      "Skalna modliszka",
+      "Mineralny kret",
+      "Hipnotyzująca skała",
+      "Potępiony solista",
+      "Zaklinaczka fal dźwiękowych",
+      "Kamienny osiłek",
+      "Twórczyni przeklętych tekstów",
+      "Uzbrojony odszczepieniec",
+      "Skalny pupil",
+      "Mistrz koszmarnej liry",
+      "Ślepa Strzała",
+      "Kamienny kleszcz",
+      "Oślepiony faun",
+      "Pokutujący bębniarz (elita 266lvl)",
+      "Szalony brzdękacz (elita 266lvl)"
+    ],
+    "maps": [
+      "Las Monolitów",
+      "Jałowa Dolina",
+      "Nieme Góry",
+      "Pękający Żleb",
+      "Kamienne Pustkowie",
+      "Krater Uwięzienia",
+      "Rumowisko Szarych Głazów"
+    ]
+  },
+  {
+    "id": 106,
+    "name": "przestraszeni",
+    "lvl": 268,
+    "monsters": [
+      "Pan grawitacji",
+      "Przestraszony",
+      "Byt w konwulsjach",
+      "Uosobienie gniewu",
+      "Mroczna poczwara",
+      "Czarna fleja",
+      "Ptasie straszydło",
+      "Świdrogłów",
+      "Twór chaosu (elita 269lvl)"
+    ],
+    "maps": [
+      "Szepczące Wyrwy p.1 - sala 1",
+      "Szepczące Wyrwy p.1 - sala 2",
+      "Szepczące Wyrwy p.1 - sala 3",
+      "Szepczące Wyrwy p.1 - sala 4",
+      "Szepczące Wyrwy p.2 - sala 1",
+      "Szepczące Wyrwy p.2 - sala 2",
+      "Szepczące Wyrwy p.2 - sala 3",
+      "Szepczące Wyrwy p.2 - sala 4",
+      "Szepczące Wyrwy p.2 - sala 5",
+      "Szepczące Wyrwy p.2 - sala 6",
+      "Szepczące Wyrwy p.3"
+    ]
+  },
+  {
+    "id": 107,
+    "name": "katakumby",
+    "lvl": 272,
+    "monsters": [
+      "Przebudzone truchło",
+      "Piaskowy włócznik",
+      "Truchło arystokraty",
+      "Nekrolord Wernoradu",
+      "Imperialny oszczepnik",
+      "Ożywiony asasyn",
+      "Strażnik katakumb",
+      "Starożytny legionista",
+      "Antyczny skrytobójca",
+      "Zasuszony szkielet bojowy",
+      "Szkielet imperialnego piechura",
+      "Wernoradzki mistyk",
+      "Wernoradzka jednostka specjalna",
+      "Powiernik upadłego sztandaru",
+      "Imperialny gwardzista",
+      "Żołnierz imperialny"
+    ],
+    "maps": [
+      "Pustynne Katakumby - sala 1",
+      "Pustynne Katakumby - sala 2",
+      "Pustynne Katakumby - sala 3",
+      "Pustynne Katakumby - sala 4",
+      "Pustynne Katakumby - sala 5",
+      "Pustynne Katakumby - Komnata Odnalezionych Skrytobójców",
+      "Pustynne Katakumby - Komnata Gwałtownej Śmierci",
+      "Pustynne Katakumby - Komnata Opętanych Dusz",
+      "Pustynne Katakumby - Komnata Krwawych Wypraw",
+      "Pustynne Katakumby - Komnata Poległych Legionistów",
+      "Pustynne Katakumby - Grobowiec Seta",
+      "Pustynne Katakumby - Korytarz Porzuconych Nadziei",
+      "Pustynne Katakumby - Korytarz Porzuconych Marzeń",
+      "Pustynne Katakumby - Wschodni Tunel Jaźni",
+      "Pustynne Katakumby - Zachodni Tunel Jaźni"
+    ]
+  },
+  {
+    "id": 108,
+    "name": "pustynia",
+    "lvl": 278,
+    "monsters": [
+      "Sęp",
+      "Zaklinacz sępów",
+      "Shaiharrudzki mutant",
+      "Piłowiec",
+      "Tancerz Shaiharrud",
+      "Smokoszczęki",
+      "Sługa piasków",
+      "Czciciel Charkhaam",
+      "Drakosęp (elita 277lvl)",
+      "Wyznawca Hebrehotha (elita 280lvl)"
+    ],
+    "maps": [
+      "Pustynia Shaiharrud - zachód",
+      "Namiot Piechoty Piłowej",
+      "Namiot Naznaczonych",
+      "Jurta Czcicieli",
+      "Namiot Gwardii Smokoszczękich",
+      "Sępiarnia",
+      "Jurta Chaegda",
+      "Jurta Nomadzka",
+      "Namiot Pustynnych Smoków",
+      "Namiot Błogosławionych",
+      "Pustynia Shaiharrud - wschód",
+      "Smocze Skalisko",
+      "Urwisko Vapora",
+      "Skały Umarłych",
+      "Jaskinia Sępa s.2",
+      "Jaskinia Sępa s.1",
+      "Jaskinia Piaskowej Burzy s.1",
+      "Jaskinia Piaskowej Burzy s.2",
+      "Jaskinia Szczęk",
+      "Jaskinia Smoczej Paszczy p.1",
+      "Jaskinia Smoczej Paszczy p.2",
+      "Jaskinia Odwagi",
+      "Jaskinia Próby",
+      "Grota Poświęcenia",
+      "Świątynia Hebrehotha - przedsionek",
+      "Świątynia Hebrehotha - sala ofiary",
+      "Świątynia Hebrehotha - sala czciciela"
+    ]
+  },
+  {
+    "id": 109,
+    "name": "wodniki",
+    "lvl": 282,
+    "monsters": [
+      "Topielica",
+      "Dziwożona",
+      "Ofiara moczarów",
+      "Wyziębły topielec",
+      "Mamuna",
+      "Wodnik",
+      "Oślizgły bebok"
+    ],
+    "maps": [
+      "Moczary Rybiego Oka",
+      "Podtopione Młaki",
+      "Źródło Narumi",
+      "Uroczysko Wodnika",
+      "Dolny Bieg",
+      "Starorzecze Narumi"
+    ]
+  },
+  {
+    "id": 110,
+    "name": "mroczne-driady",
+    "lvl": 286,
+    "monsters": [
+      "Bezwzględna Echeveria",
+      "Mroczna Difenbachia",
+      "Hoya Carnosa",
+      "Bluszczowa Wojowniczka",
+      "Chamedora Pani Drzew",
+      "Driada Haworsja",
+      "Sansevieria Strażniczka Kniei",
+      "Calathea Ornata (elita 286lvl)",
+      "Strelitzia Reginae (elita 286lvl)"
+    ],
+    "maps": [
+      "Rozlewisko Kai",
+      "Gvar Hamryd",
+      "Matecznik Szelestu",
+      "Jaskinia Suchych Pędów s.1",
+      "Jaskinia Suchych Pędów s.2",
+      "Jaskinia Suchych Pędów s.3",
+      "Jaskinia Suchych Pędów s.4",
+      "Drzewo Życia p.1",
+      "Drzewo Życia p.2"
+    ]
+  }
+]
