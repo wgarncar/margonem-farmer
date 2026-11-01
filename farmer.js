@@ -330,6 +330,8 @@
           id: d.id,
           nick: d.nick ?? d.name,
           type: Number(d.type),
+          wt: Number(d.wt),
+          lvl: Number(d.lvl),
           x: Number(d.x),
           y: Number(d.y)
         };
@@ -345,7 +347,8 @@
   function getAllowedMonsters(engine) {
     return getNpcs(engine).filter(n =>
       allowedNames.has(normalize(n.nick)) &&
-      (n.type === 2 || n.type === 3)
+      (n.type === 2 || n.type === 3) &&
+      !(Number.isFinite(n.wt) && n.wt >= 80)
     );
   }
 
@@ -805,12 +808,205 @@
   }
 
 
+  function findHeroOnMap(engine) {
+    return getNpcs(engine).find(npc =>
+      (npc.type === 2 || npc.type === 3) &&
+      Number.isFinite(npc.wt) &&
+      npc.wt >= 80 &&
+      npc.wt < 100
+    ) ?? null;
+  }
+
+  function showHeroPopup(hero, mapName) {
+    // Zapobiegamy tworzeniu wielu popupów.
+    document.getElementById('farmer-hero-popup')?.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'farmer-hero-popup';
+
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      inset: '0',
+      zIndex: '2147483647',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(0, 0, 0, 0.65)'
+    });
+
+    const popup = document.createElement('div');
+
+    Object.assign(popup.style, {
+      width: '310px',
+      maxWidth: '90vw',
+      padding: '20px',
+      background: '#29221c',
+      border: '2px solid #a9854c',
+      borderRadius: '6px',
+      color: '#e5d4b0',
+      textAlign: 'center',
+      fontFamily: 'Arial, sans-serif',
+      boxShadow: '0 10px 35px rgba(0,0,0,.6)'
+    });
+
+    const title = document.createElement('h2');
+    title.textContent = 'Wykryto herosa!';
+    title.style.cssText = `
+    color: #e7b95e;
+    margin: 0 0 16px;
+    font-size: 20px;
+  `;
+
+    const name = document.createElement('div');
+    name.textContent = hero.nick;
+    name.style.cssText = `
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  `;
+
+    const level = document.createElement('div');
+    level.textContent = Number.isFinite(hero.lvl)
+      ? `Poziom: ${hero.lvl}`
+      : '';
+
+    const map = document.createElement('div');
+    map.textContent = `Mapa: ${mapName}`;
+
+    const coords = document.createElement('div');
+    coords.textContent = `Pozycja: X: ${hero.x}, Y: ${hero.y}`;
+
+    for (const el of [level, map, coords]) {
+      el.style.marginBottom = '10px';
+    }
+
+    const message = document.createElement('div');
+    message.textContent = 'Farmer został zatrzymany.';
+    message.style.cssText = `
+    margin: 16px 0;
+    font-size: 12px;
+    color: #d8b982;
+  `;
+
+    const button = document.createElement('button');
+    button.textContent = 'Zamknij';
+
+    Object.assign(button.style, {
+      padding: '9px 30px',
+      background: '#594128',
+      border: '1px solid #b69157',
+      borderRadius: '4px',
+      color: '#f3e0b7',
+      cursor: 'pointer'
+    });
+
+    button.addEventListener('click', () => overlay.remove());
+
+
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Kopiuj informacje';
+
+    Object.assign(copyButton.style, {
+      padding: '9px 20px',
+      marginRight: '8px',
+      background: '#594128',
+      border: '1px solid #b69157',
+      borderRadius: '4px',
+      color: '#f3e0b7',
+      cursor: 'pointer'
+    });
+
+    copyButton.addEventListener('click', async () => {
+      const info = [
+        `Heros: ${hero.nick}`,
+        `Poziom: ${Number.isFinite(hero.lvl) ? hero.lvl : 'Nieznany'}`,
+        `Mapa: ${mapName}`,
+        `Pozycja: X: ${hero.x}, Y: ${hero.y}`
+      ].join('\n');
+
+      try {
+        await navigator.clipboard.writeText(info);
+
+        copyButton.textContent = 'Skopiowano!';
+        copyButton.style.background = '#365a32';
+
+        console.log('[Farmer] Skopiowano informacje:', info);
+      } catch (error) {
+        console.error('[Farmer] Błąd kopiowania:', error);
+
+        // Alternatywa dla przeglądarek, które blokują Clipboard API.
+        const textarea = document.createElement('textarea');
+        textarea.value = info;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        const copied = document.execCommand('copy');
+        textarea.remove();
+
+        if (copied) {
+          copyButton.textContent = 'Skopiowano!';
+          copyButton.style.background = '#365a32';
+        } else {
+          copyButton.textContent = 'Błąd kopiowania';
+        }
+      }
+    });
+
+    popup.append(
+      title,
+      name,
+      level,
+      map,
+      coords,
+      message,
+      copyButton,
+      button
+    );
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+  }
+
+  function checkHeroAndStop(engine) {
+    const hero = findHeroOnMap(engine);
+
+    if (!hero) return false;
+
+    const mapName = engine.map?.d?.name ?? 'Nieznana mapa';
+
+    // Najpierw zatrzymujemy automat.
+    stop('Wykryto herosa');
+
+    console.warn('[Farmer] Wykryto herosa:', {
+      name: hero.nick,
+      lvl: hero.lvl,
+      map: mapName,
+      x: hero.x,
+      y: hero.y
+    });
+
+    // Dopiero potem wyświetlamy popup.
+    showHeroPopup(hero, mapName);
+
+    return true;
+  }
+
   function tick() {
     if (!running) return;
 
     try {
       const engine = getEngine();
       const now = Date.now();
+
+      // Najwyższy priorytet: wykrycie herosa.
+      // Sprawdzamy przed ruchem, walką i zmianą mapy.
+      if (checkHeroAndStop(engine)) {
+        return;
+      }
 
       // Rejestrujemy mapę, na której aktualnie jesteśmy.
       const currentName = normalize(engine.map?.d?.name);
