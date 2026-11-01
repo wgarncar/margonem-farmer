@@ -255,8 +255,6 @@ const MONSTER_LOST_TIMEOUT = 5000;
     statusEl.textContent = `Status: ${message}`;
   }
 
-  loadExpowiska();
-
   function getEngine() {
     const engine = game.Engine || window.Engine;
 
@@ -1002,6 +1000,7 @@ function loadExpowiska() {
   }
 }
 
+  loadExpowiska();
 
   function start() {
     if (running) return;
