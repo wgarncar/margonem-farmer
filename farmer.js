@@ -239,6 +239,7 @@ let gatewayAttempts = 0;
   let isApproachingMonster = false;
 let approachingMonsterId = null;
 let monsterLastSeen = 0;
+let expowiskaCache = [];
 
 const MONSTER_LOST_TIMEOUT = 5000;
 
@@ -936,9 +937,6 @@ if (!isApproachingMonster) {
       stop(`Błąd: ${error.message}`);
     }
   }
-
-  
-let expowiskaCache = [];
 
 function loadExpowiska() {
   const select = root.querySelector('#farmer-exp-id');
