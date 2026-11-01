@@ -61,17 +61,12 @@
       <div class="inner-content">
         <div class="farmer-content">
           <label class="farmer-label" for="farmer-exp-id">
-            ID expowiska
-          </label>
+  Wybierz expowisko
+</label>
 
-          <input
-            id="farmer-exp-id"
-            class="farmer-input"
-            type="number"
-            min="1"
-            step="1"
-            placeholder="Wpisz ID..."
-          />
+<select id="farmer-exp-id" class="farmer-select">
+  <option value="">Ładowanie expowisk...</option>
+</select>
 
           <div class="farmer-actions">
             <button type="button" class="farmer-button farmer-start">
@@ -177,6 +172,28 @@
     #${ROOT_ID} .farmer-counter {
       color: #caa169;
     }
+
+    #farmer-addon-window .farmer-select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 6px 8px;
+  background: #211b17;
+  color: #f7eddb;
+  border: 1px solid #8f734b;
+  border-radius: 3px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#farmer-addon-window .farmer-select option {
+  background: #211b17;
+  color: #f7eddb;
+}
+
+#farmer-addon-window .farmer-select:focus {
+  outline: 1px solid #caa169;
+}
   `;
 
   document.head.appendChild(style);
@@ -225,11 +242,6 @@ let monsterLastSeen = 0;
 
 const MONSTER_LOST_TIMEOUT = 5000;
 
-  try {
-    input.value =
-      localStorage.getItem(CONFIG.storageKey) || '';
-  } catch {}
-
   function normalize(value) {
     return String(value ?? '')
       .normalize('NFC')
@@ -241,6 +253,8 @@ const MONSTER_LOST_TIMEOUT = 5000;
   function setStatus(message) {
     statusEl.textContent = `Status: ${message}`;
   }
+
+  loadExpowiska();
 
   function getEngine() {
     const engine = game.Engine || window.Engine;
@@ -923,10 +937,76 @@ if (!isApproachingMonster) {
     }
   }
 
+  
+let expowiskaCache = [];
+
+function loadExpowiska() {
+  const select = root.querySelector('#farmer-exp-id');
+
+  try {
+    if (typeof GM_getResourceText !== 'function') {
+      throw new Error('Brak GM_getResourceText.');
+    }
+
+    const json = GM_getResourceText('farmerData');
+    const expowiska = JSON.parse(json);
+
+    if (!Array.isArray(expowiska)) {
+      throw new Error('Niepoprawny format expowiska.json.');
+    }
+
+    expowiskaCache = expowiska.filter(e =>
+      Number.isSafeInteger(Number(e.id)) &&
+      typeof e.name === 'string' &&
+      e.name.trim() &&
+      e.lvl != null
+    );
+
+    select.replaceChildren();
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Wybierz expowisko...';
+    select.appendChild(placeholder);
+
+    expowiskaCache.forEach(exp => {
+      const option = document.createElement('option');
+
+      option.value = String(exp.id);
+      option.textContent = `${exp.name} (${exp.lvl})`;
+
+      select.appendChild(option);
+    });
+
+    // Przywracanie ostatnio wybranego expowiska
+    const savedId = localStorage.getItem(CONFIG.storageKey);
+
+    if (
+      savedId &&
+      expowiskaCache.some(e => String(e.id) === savedId)
+    ) {
+      select.value = savedId;
+    }
+
+    setStatus(`Załadowano ${expowiskaCache.length} expowisk`);
+
+  } catch (error) {
+    console.error('[Farmer] Błąd ładowania expowisk:', error);
+
+    select.replaceChildren();
+
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = 'Błąd ładowania expowisk';
+    select.appendChild(option);
+
+    setStatus(`Błąd: ${error.message}`);
+  }
+}
+
+
   function start() {
     if (running) return;
-
-    const id = Number(input.value);
 
     if (!Number.isSafeInteger(id) || id < 1) {
       setStatus('Podaj poprawne ID expowiska');
@@ -938,20 +1018,20 @@ if (!isApproachingMonster) {
         throw new Error('Brak GM_getResourceText.');
       }
 
-      const json = GM_getResourceText('farmerData');
-      const expowiska = JSON.parse(json);
+const id = Number(input.value);
 
-      if (!Array.isArray(expowiska)) {
-        throw new Error('Niepoprawny format expowiska.json.');
-      }
+if (!input.value || !Number.isSafeInteger(id) || id <= 0) {
+  setStatus('Wybierz expowisko z listy');
+  return;
+}
 
-      const expowisko = expowiska.find(e =>
-        Number(e.id) === id
-      );
+const expowisko = expowiskaCache.find(e =>
+  Number(e.id) === id
+);
 
-      if (!expowisko) {
-        throw new Error(`Nie znaleziono expowiska ID ${id}.`);
-      }
+if (!expowisko) {
+  throw new Error(`Nie znaleziono expowiska ID ${id}.`);
+}
 
       if (!Array.isArray(expowisko.monsters) ||
           expowisko.monsters.length === 0) {
