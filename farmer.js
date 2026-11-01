@@ -219,6 +219,11 @@ let gatewayAttempts = 0;
   let lastDestination = null;
   let lastHeroPosition = null;
   let stuckAttempts = 0;
+  let isApproachingMonster = false;
+let approachingMonsterId = null;
+let monsterLastSeen = 0;
+
+const MONSTER_LOST_TIMEOUT = 5000;
 
   try {
     input.value =
@@ -815,39 +820,102 @@ if (gatewayTarget && (
         }
       }
 
-      const targets = getAllowedMonsters(engine);
+      
+const targets = getAllowedMonsters(engine);
 
-if (!targets.length) {
-  currentTargetId = null;
+// Jeżeli jesteśmy w trakcie podchodzenia,
+// najpierw sprawdzamy poprzednio wybranego potwora.
+if (isApproachingMonster && approachingMonsterId !== null) {
+  const trackedMonster = targets.find(
+    n => String(n.id) === String(approachingMonsterId)
+  );
 
-  handleGateway(engine, now);
-  return;
-}
+  if (trackedMonster) {
+    monsterLastSeen = now;
 
-// Gdy pojawi się potwór,
-// porzucamy planowane przejście.
-gatewayTarget = null;
-gatewayWaitingUntil = 0;
-gatewayAttempts = 0;
+    // Kontynuujemy podchodzenie do tego samego potwora.
+    const result = findNearestTarget(engine, [trackedMonster]);
 
-      const result = findNearestTarget(engine, targets);
-
-      if (!result) {
-        setStatus('Brak osiągalnych potworów');
-        return;
-      }
-
+    if (result) {
       const { npc, destination, path } = result;
 
       currentTargetId = npc.id;
       targetEl.textContent = `Cel: ${npc.nick}`;
 
       if (isAdjacent(engine.hero.d, npc)) {
+        isApproachingMonster = false;
+        approachingMonsterId = null;
+
         attackNpc(npc, now);
       } else {
-        setStatus(`Podchodzę: ${npc.nick} (${path.length} kroków)`);
+        setStatus(
+          `Podchodzę: ${npc.nick} (${path.length} kroków)`
+        );
+
         moveTo(engine, destination, now);
       }
+
+      return; // Nie sprawdzamy przejść do innych map.
+    }
+  }
+
+  // Potwór chwilowo zniknął lub jest niedostępny.
+  // Czekamy maksymalnie 5 sekund.
+  if (now - monsterLastSeen < MONSTER_LOST_TIMEOUT) {
+    setStatus('Oczekiwanie na aktualizację NPC');
+    return;
+  }
+
+  // Potwór zniknął na stałe — odblokowujemy wybór celu.
+  isApproachingMonster = false;
+  approachingMonsterId = null;
+  currentTargetId = null;
+}
+
+// Wyszukiwanie nowego potwora.
+if (targets.length > 0) {
+  const result = findNearestTarget(engine, targets);
+
+  if (result) {
+    const { npc, destination, path } = result;
+
+    currentTargetId = npc.id;
+    targetEl.textContent = `Cel: ${npc.nick}`;
+
+    // Anulujemy wybór przejścia do innej mapy.
+    gatewayTarget = null;
+    gatewayWaitingUntil = 0;
+    gatewayAttempts = 0;
+
+    if (isAdjacent(engine.hero.d, npc)) {
+      isApproachingMonster = false;
+      approachingMonsterId = null;
+
+      attackNpc(npc, now);
+    } else {
+      isApproachingMonster = true;
+      approachingMonsterId = npc.id;
+      monsterLastSeen = now;
+
+      setStatus(
+        `Podchodzę: ${npc.nick} (${path.length} kroków)`
+      );
+
+      moveTo(engine, destination, now);
+    }
+
+    return;
+  }
+}
+
+// Dopiero gdy nie mamy aktywnego celu
+// i nie znaleziono osiągalnego potwora,
+// możemy rozpocząć zmianę mapy.
+if (!isApproachingMonster) {
+  currentTargetId = null;
+  handleGateway(engine, now);
+}
+
 
     } catch (error) {
       console.error('[Farmer]', error);
