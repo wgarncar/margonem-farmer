@@ -199,6 +199,14 @@
   let timer = null;
   let selectedId = null;
   let allowedNames = new Set();
+  let allowedMaps = new Set();
+let visitedMaps = new Set();
+
+let gatewayTarget = null;
+let lastGatewayAction = 0;
+let gatewayWaitingUntil = 0;
+let gatewayPreviousMap = null;
+let gatewayAttempts = 0;
   let currentTargetId = null;
   let attackCount = 0;
   let lastMove = 0;
@@ -455,12 +463,307 @@
     engine.hero.autoGoTo(destination);
   }
 
+  
+function getGateways(engine) {
+  const list = engine.map?.gateways?.getList?.() ?? [];
+
+  return list
+    .filter(g => g?.d)
+    .map(g => ({
+      obj: g,
+      id: g.d.id,
+      x: Number(g.d.x),
+      y: Number(g.d.y),
+      name: String(g.tip?.[0] ?? '').trim()
+    }))
+    .filter(g =>
+      Number.isInteger(g.x) &&
+      Number.isInteger(g.y) &&
+      allowedMaps.has(normalize(g.name))
+    );
+}
+
+// BFS do konkretnego kafelka przejścia.
+// Nie zakładamy, że najbliższe geometrycznie
+// przejście jest również najbliższe po ścieżce.
+function getGatewayPath(engine, gateway) {
+  const hero = engine.hero.d;
+  const map = engine.map;
+
+  const width = Number(map?.d?.x ?? map?.size?.x);
+  const height = Number(map?.d?.y ?? map?.size?.y);
+
+  if (
+    !Number.isInteger(width) ||
+    !Number.isInteger(height) ||
+    typeof map?.col?.check !== 'function'
+  ) {
+    return null;
+  }
+
+  const startX = Number(hero.x);
+  const startY = Number(hero.y);
+
+  const key = (x, y) => `${x},${y}`;
+
+  const startKey = key(startX, startY);
+  const endKey = key(gateway.x, gateway.y);
+
+  const queue = [[startX, startY]];
+  const visited = new Set([startKey]);
+  const previous = new Map();
+
+  const directions = [
+    [0, -1],
+    [1, 0],
+    [0, 1],
+    [-1, 0]
+  ];
+
+  let found = false;
+
+  for (let i = 0; i < queue.length; i++) {
+    const [x, y] = queue[i];
+
+    if (key(x, y) === endKey) {
+      found = true;
+      break;
+    }
+
+    for (const [dx, dy] of directions) {
+      const nx = x + dx;
+      const ny = y + dy;
+      const nextKey = key(nx, ny);
+
+      if (
+        nx < 0 ||
+        ny < 0 ||
+        nx >= width ||
+        ny >= height ||
+        visited.has(nextKey)
+      ) {
+        continue;
+      }
+
+      // Pole przejścia bywa oznaczone w kolizjach
+      // inaczej niż zwykłe pole do chodzenia.
+      const isGatewayTile = nextKey === endKey;
+
+      if (
+        !isGatewayTile &&
+        Number(map.col.check(nx, ny)) !== 0
+      ) {
+        continue;
+      }
+
+      visited.add(nextKey);
+      previous.set(nextKey, [x, y]);
+      queue.push([nx, ny]);
+    }
+  }
+
+  if (!found) return null;
+
+  const path = [];
+  let current = [gateway.x, gateway.y];
+
+  while (key(...current) !== startKey) {
+    path.unshift({
+      x: current[0],
+      y: current[1]
+    });
+
+    const parent = previous.get(key(...current));
+    if (!parent) return null;
+
+    current = parent;
+  }
+
+  return path;
+}
+
+function findNearestGateway(engine) {
+  const gateways = getGateways(engine);
+
+  const candidates = gateways
+    .map(gateway => ({
+      gateway,
+      path: getGatewayPath(engine, gateway)
+    }))
+    .filter(item => item.path !== null);
+
+  if (!candidates.length) return null;
+
+  // Preferuj mapy jeszcze nieodwiedzone.
+  let available = candidates.filter(item =>
+    !visitedMaps.has(normalize(item.gateway.name))
+  );
+
+  // Po odwiedzeniu wszystkich dostępnych map
+  // rozpoczynamy kolejną rundę.
+  if (!available.length) {
+    visitedMaps.clear();
+
+    const currentName = normalize(engine.map?.d?.name);
+    if (currentName) visitedMaps.add(currentName);
+
+    available = candidates.filter(item =>
+      normalize(item.gateway.name) !==
+      normalize(gatewayPreviousMap)
+    );
+
+    if (!available.length) {
+      available = candidates;
+    }
+  }
+
+  available.sort((a, b) =>
+    a.path.length - b.path.length
+  );
+
+  return available[0];
+}
+
+function handleGateway(engine, now) {
+  const currentMapName = normalize(engine.map?.d?.name);
+
+  // Wykrycie rzeczywistej zmiany mapy
+  // na podstawie nazwy i identyfikatora.
+  if (
+    gatewayTarget &&
+    (
+      normalize(gatewayTarget.fromName) !== currentMapName ||
+      String(gatewayTarget.fromId) !==
+        String(engine.map?.d?.id)
+    )
+  ) {
+    visitedMaps.add(currentMapName);
+
+    gatewayPreviousMap = gatewayTarget.fromName;
+    gatewayTarget = null;
+    gatewayWaitingUntil = 0;
+    gatewayAttempts = 0;
+
+    currentTargetId = null;
+    lastDestination = null;
+    lastHeroPosition = null;
+    stuckAttempts = 0;
+
+    setStatus(`Nowa mapa: ${engine.map?.d?.name}`);
+    return;
+  }
+
+  if (now < gatewayWaitingUntil) {
+    setStatus('Oczekiwanie na zmianę mapy');
+    return;
+  }
+
+  const selected = findNearestGateway(engine);
+
+  if (!selected) {
+    gatewayTarget = null;
+    targetEl.textContent = 'Przejście: brak';
+    setStatus('Brak dostępnego przejścia z listy maps');
+    return;
+  }
+
+  const { gateway, path } = selected;
+
+  const targetKey = `${gateway.id}:${gateway.x}:${gateway.y}`;
+
+  if (gatewayTarget?.key !== targetKey) {
+    gatewayTarget = {
+      key: targetKey,
+      fromId: engine.map?.d?.id,
+      fromName: engine.map?.d?.name,
+      gateway
+    };
+
+    gatewayAttempts = 0;
+    lastDestination = null;
+    lastHeroPosition = null;
+    stuckAttempts = 0;
+  }
+
+  targetEl.textContent = `Mapa docelowa: ${gateway.name}`;
+
+  const hero = engine.hero.d;
+
+  if (
+    Number(hero.x) === gateway.x &&
+    Number(hero.y) === gateway.y
+  ) {
+    if (now - lastGatewayAction < CONFIG.moveRetryMs) {
+      return;
+    }
+
+    if (gatewayAttempts >= 3) {
+      gatewayTarget = null;
+      setStatus('Nie udało się aktywować przejścia');
+      stop('Błąd przejścia między mapami');
+      return;
+    }
+
+    lastGatewayAction = now;
+    gatewayAttempts++;
+
+    if (typeof engine.hero.getTroughGateway === 'function') {
+      engine.hero.getTroughGateway();
+    } else if (
+      typeof gateway.obj.onclick === 'function'
+    ) {
+      gateway.obj.onclick({
+        stopPropagation() {},
+        preventDefault() {},
+        button: 0,
+        which: 1,
+        type: 'click'
+      });
+    } else {
+      stop('Brak metody aktywacji przejścia');
+      return;
+    }
+
+    gatewayWaitingUntil = now + 4000;
+
+    setStatus(`Przechodzę do: ${gateway.name}`);
+    return;
+  }
+
+  setStatus(
+    `Idę do: ${gateway.name} (${path.length} kroków)`
+  );
+
+  moveTo(engine, {
+    x: gateway.x,
+    y: gateway.y
+  }, now);
+}
+
+
   function tick() {
     if (!running) return;
 
     try {
       const engine = getEngine();
       const now = Date.now();
+
+      // Rejestrujemy mapę, na której aktualnie jesteśmy.
+const currentName = normalize(engine.map?.d?.name);
+
+if (currentName) {
+  visitedMaps.add(currentName);
+}
+
+// Jeżeli trwa przechodzenie między mapami,
+// najpierw obsłuż jego zakończenie.
+if (gatewayTarget && (
+  normalize(gatewayTarget.fromName) !== currentName ||
+  String(gatewayTarget.fromId) !== String(engine.map?.d?.id)
+)) {
+  handleGateway(engine, now);
+  return;
+}
 
       if (engine.dead) {
         stop('Postać nie żyje');
@@ -514,12 +817,18 @@
 
       const targets = getAllowedMonsters(engine);
 
-      if (!targets.length) {
-        currentTargetId = null;
-        targetEl.textContent = 'Cel: brak';
-        setStatus('Oczekiwanie na potwory');
-        return;
-      }
+if (!targets.length) {
+  currentTargetId = null;
+
+  handleGateway(engine, now);
+  return;
+}
+
+// Gdy pojawi się potwór,
+// porzucamy planowane przejście.
+gatewayTarget = null;
+gatewayWaitingUntil = 0;
+gatewayAttempts = 0;
 
       const result = findNearestTarget(engine, targets);
 
@@ -587,6 +896,30 @@
         expowisko.monsters.map(normalize)
       );
 
+      if (!Array.isArray(expowisko.maps)) {
+  throw new Error('Wybrane expowisko nie ma listy maps.');
+}
+
+allowedMaps = new Set(
+  expowisko.maps.map(normalize)
+);
+
+visitedMaps.clear();
+
+const startingMap = normalize(
+  getEngine().map?.d?.name
+);
+
+if (startingMap) {
+  visitedMaps.add(startingMap);
+}
+
+gatewayTarget = null;
+gatewayPreviousMap = null;
+gatewayWaitingUntil = 0;
+lastGatewayAction = 0;
+gatewayAttempts = 0;
+
       selectedId = id;
       running = true;
       attackCount = 0;
@@ -626,6 +959,10 @@
 
   function stop(reason = 'Zatrzymany') {
     running = false;
+
+    gatewayTarget = null;
+gatewayWaitingUntil = 0;
+gatewayAttempts = 0;
 
     if (timer !== null) {
       clearInterval(timer);
