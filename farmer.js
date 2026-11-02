@@ -60,21 +60,18 @@
     <div class="content content--padding-md">
       <div class="inner-content">
         <div class="farmer-content">
-          <label class="farmer-label" for="farmer-exp-id">
-  Wybierz expowisko
-</label>
 
-<label class="farmer-label">
-  Wybierz expowiska
-</label>
+          <label class="farmer-label">
+            Wybierz expowiska
+          </label>
 
-<div class="farmer-exp-list" id="farmer-exp-list">
-  Ładowanie expowisk...
-</div>
+          <div class="farmer-exp-list" id="farmer-exp-list">
+            Ładowanie expowisk...
+          </div>
 
-<div class="farmer-selected-count">
-  Wybrano: 0
-</div>
+          <div class="farmer-selected-count">
+            Wybrano: 0
+          </div>
 
           <div class="farmer-actions">
             <button type="button" class="farmer-button farmer-start">
@@ -263,7 +260,13 @@
   let selectedIds = [];
   let allowedNames = new Set();
   let allowedMaps = new Set();
-  let visitedMaps = new Set();
+
+  // Nazwa mapy -> numer ostatniej wizyty
+  let mapLastVisited = new Map();
+
+  let visitCounter = 0;
+  let lastVisitedMapId = null;
+  let lastVisitedMapName = null;
 
   let gatewayTarget = null;
   let lastGatewayAction = 0;
@@ -649,47 +652,83 @@
     return path;
   }
 
+  function registerMapVisit(engine) {
+    const mapId = engine.map?.d?.id;
+    const mapName = normalize(engine.map?.d?.name);
+
+    if (!mapName) return;
+
+    if (
+      lastVisitedMapId === mapId &&
+      lastVisitedMapName === mapName
+    ) {
+      return;
+    }
+
+    visitCounter++;
+
+    mapLastVisited.set(mapName, visitCounter);
+
+    lastVisitedMapId = mapId;
+    lastVisitedMapName = mapName;
+
+    console.log(
+      `[Farmer] Wizyta #${visitCounter}: ${mapName}`
+    );
+  }
+
+
   function findNearestGateway(engine) {
     const gateways = getGateways(engine);
 
     const candidates = gateways
       .map(gateway => ({
         gateway,
-        path: getGatewayPath(engine, gateway)
+        path: getGatewayPath(engine, gateway),
+        lastVisit: mapLastVisited.get(
+          normalize(gateway.name)
+        )
       }))
       .filter(item => item.path !== null);
 
-    if (!candidates.length) return null;
-
-    // Preferuj mapy jeszcze nieodwiedzone.
-    let available = candidates.filter(item =>
-      !visitedMaps.has(normalize(item.gateway.name))
-    );
-
-    // Po odwiedzeniu wszystkich dostępnych map
-    // rozpoczynamy kolejną rundę.
-    if (!available.length) {
-      visitedMaps.clear();
-
-      const currentName = normalize(engine.map?.d?.name);
-      if (currentName) visitedMaps.add(currentName);
-
-      available = candidates.filter(item =>
-        normalize(item.gateway.name) !==
-        normalize(gatewayPreviousMap)
-      );
-
-      if (!available.length) {
-        available = candidates;
-      }
+    if (!candidates.length) {
+      return null;
     }
 
-    available.sort((a, b) =>
-      a.path.length - b.path.length
-    );
+    candidates.sort((a, b) => {
+      const aNeverVisited = a.lastVisit === undefined;
+      const bNeverVisited = b.lastVisit === undefined;
 
-    return available[0];
+      // 1. Mapy nigdy nieodwiedzone mają pierwszeństwo.
+      if (aNeverVisited !== bNeverVisited) {
+        return aNeverVisited ? -1 : 1;
+      }
+
+      // 2. Jeśli obie mapy były odwiedzone,
+      // wybieramy tę najdawniej odwiedzoną.
+      if (!aNeverVisited && !bNeverVisited) {
+        if (a.lastVisit !== b.lastVisit) {
+          return a.lastVisit - b.lastVisit;
+        }
+      }
+
+      // 3. W przypadku remisu wybieramy
+      // najkrótszą osiągalną ścieżkę.
+      return a.path.length - b.path.length;
+    });
+
+    const selected = candidates[0];
+
+    console.log('[Farmer] Wybrane przejście:', {
+      map: selected.gateway.name,
+      steps: selected.path.length,
+      lastVisit: selected.lastVisit ?? 'Nigdy',
+      visitHistory: Object.fromEntries(mapLastVisited)
+    });
+
+    return selected;
   }
+
 
   function handleGateway(engine, now) {
     const currentMapName = normalize(engine.map?.d?.name);
@@ -704,7 +743,6 @@
         String(engine.map?.d?.id)
       )
     ) {
-      visitedMaps.add(currentMapName);
 
       gatewayPreviousMap = gatewayTarget.fromName;
       gatewayTarget = null;
@@ -1009,11 +1047,9 @@
       }
 
       // Rejestrujemy mapę, na której aktualnie jesteśmy.
-      const currentName = normalize(engine.map?.d?.name);
+      registerMapVisit(engine);
 
-      if (currentName) {
-        visitedMaps.add(currentName);
-      }
+      const currentName = normalize(engine.map?.d?.name);
 
       // Jeżeli trwa przechodzenie między mapami,
       // najpierw obsłuż jego zakończenie.
@@ -1356,15 +1392,16 @@
 
       selectedIds = [...ids];
 
-      visitedMaps.clear();
+      mapLastVisited.clear();
+      visitCounter = 0;
+      lastVisitedMapId = null;
+      lastVisitedMapName = null;
+
+      registerMapVisit(engine);
 
       const startingMap = normalize(
         engine.map?.d?.name
       );
-
-      if (startingMap) {
-        visitedMaps.add(startingMap);
-      }
 
       gatewayTarget = null;
       gatewayPreviousMap = null;
