@@ -1536,9 +1536,12 @@
   dragHandle.addEventListener('pointercancel', endDrag);
 
   function destroy() {
+    disableDobijara();
     stop();
+
     root.remove();
     style.remove();
+    dobijaraStyle.remove();
 
     if (window.Farmer === api) {
       delete window.Farmer;
@@ -1546,6 +1549,593 @@
   }
 
   $('.close-button').addEventListener('click', destroy);
+
+
+  // ============================
+  // DOBIJARA - tryb PvP
+  // ============================
+
+  const DOBIJARA_CONFIG = {
+    tickMs: 400,
+    moveRetryMs: 1500,
+    attackRetryMs: 2500,
+    fightTimeoutMs: 7000,
+    lostTargetMs: 5000,
+    afterFightMs: 1400,
+    maxAttackAttempts: 5
+  };
+
+  const dobijara = {
+    enabled: false,
+    busy: false,
+    timer: null,
+    target: null,
+    targetLastSeen: 0,
+    lastMove: 0,
+    lastAttack: 0,
+    attackAttempts: 0,
+    sawFight: false,
+    autoFightClicked: false,
+    resumeAt: 0,
+    interruptedFarmer: false
+  };
+
+  const dobijaraPanel = document.createElement('div');
+  dobijaraPanel.className = 'farmer-dobijara';
+
+  dobijaraPanel.innerHTML = `
+    <div class="farmer-dobijara-title">Dobijara</div>
+    <button type="button" class="farmer-button farmer-dobijara-toggle">
+      Uruchom
+    </button>
+    <div class="farmer-dobijara-status">
+      Wyłączona
+    </div>
+  `;
+
+  root.querySelector('.farmer-content').appendChild(
+    dobijaraPanel
+  );
+
+  const dobijaraButton = dobijaraPanel.querySelector(
+    '.farmer-dobijara-toggle'
+  );
+
+  const dobijaraStatus = dobijaraPanel.querySelector(
+    '.farmer-dobijara-status'
+  );
+
+  const dobijaraStyle = document.createElement('style');
+
+  dobijaraStyle.textContent = `
+    #farmer-addon-window .farmer-dobijara {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #8f734b;
+    }
+
+    #farmer-addon-window .farmer-dobijara-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #e7b95e;
+      margin-bottom: 8px;
+    }
+
+    #farmer-addon-window .farmer-dobijara-toggle {
+      width: 100%;
+    }
+
+    #farmer-addon-window .farmer-dobijara-status {
+      margin-top: 7px;
+      font-size: 11px;
+      color: #caa169;
+      overflow-wrap: anywhere;
+    }
+  `;
+
+  document.head.appendChild(dobijaraStyle);
+
+  function setDobijaraStatus(message) {
+    dobijaraStatus.textContent = message;
+  }
+
+  // Relacje, których nigdy nie atakujemy.
+  const protectedRelations = new Set([
+    'fr',
+    'cl',
+    'cl-fr',
+    'friends',
+    'clan-members',
+    'clan-friends',
+    'friend',
+    'clan',
+    'ally',
+    'alliance',
+    'party',
+    'party-members',
+    'self'
+  ]);
+
+  // Rozpoznane relacje pozwalające rozważyć atak.
+  const hostileRelations = new Set([
+    'en',
+    'enemy',
+    'enemies',
+    'neutral',
+    'none',
+    'other',
+    'no-relation',
+    'hostile'
+  ]);
+
+  function getPlayersOnMap(engine) {
+    const source = engine.whoIsHere?.getList?.();
+
+    if (!source) return [];
+
+    return Object.entries(source)
+      .map(([key, value]) => {
+        const d = value?.d ?? value;
+
+        if (!d) return null;
+
+        const relation = String(
+          d.relation ?? d.relations ?? ''
+        ).toLowerCase().trim();
+
+        return {
+          id: d.id ?? key,
+          nick: d.nick ?? d.name ?? '',
+          lvl: Number(d.lvl),
+          x: Number(d.x),
+          y: Number(d.y),
+          relation,
+          obj: value
+        };
+      })
+      .filter(player =>
+        player &&
+        player.id != null &&
+        Number.isFinite(player.x) &&
+        Number.isFinite(player.y)
+      );
+  }
+
+  function isHostilePlayer(player, engine) {
+    const self = engine.hero.d;
+
+    if (String(player.id) === String(self.id)) {
+      return false;
+    }
+
+    if (
+      normalize(player.nick) === normalize(self.nick)
+    ) {
+      return false;
+    }
+
+    if (protectedRelations.has(player.relation)) {
+      return false;
+    }
+
+    // Brak rozpoznanej relacji:
+    // nie ryzykujemy ataku na sojusznika.
+    return hostileRelations.has(player.relation);
+  }
+
+  function findDobijaraTarget(engine) {
+    const hero = engine.hero.d;
+
+    return getPlayersOnMap(engine)
+      .filter(player => isHostilePlayer(player, engine))
+      .sort((a, b) => {
+        const distanceA =
+          Math.abs(a.x - hero.x) +
+          Math.abs(a.y - hero.y);
+
+        const distanceB =
+          Math.abs(b.x - hero.x) +
+          Math.abs(b.y - hero.y);
+
+        return distanceA - distanceB;
+      })[0] ?? null;
+  }
+
+  // Wyznaczenie osiągalnego pola obok gracza.
+  function getDobijaraDestination(engine, player) {
+    const hero = engine.hero.d;
+    const map = engine.map;
+
+    const width = Number(map?.d?.x ?? map?.size?.x);
+    const height = Number(map?.d?.y ?? map?.size?.y);
+
+    if (
+      !Number.isInteger(width) ||
+      !Number.isInteger(height) ||
+      typeof map?.col?.check !== 'function'
+    ) {
+      return null;
+    }
+
+    const startX = Number(hero.x);
+    const startY = Number(hero.y);
+
+    const key = (x, y) => `${x},${y}`;
+
+    const queue = [[startX, startY]];
+    const seen = new Set([key(startX, startY)]);
+
+    const directions = [
+      [0, -1],
+      [1, 0],
+      [0, 1],
+      [-1, 0]
+    ];
+
+    for (let i = 0; i < queue.length; i++) {
+      const [x, y] = queue[i];
+
+      if (
+        Math.abs(x - player.x) <= 1 &&
+        Math.abs(y - player.y) <= 1
+      ) {
+        return { x, y, distance: i };
+      }
+
+      for (const [dx, dy] of directions) {
+        const nx = x + dx;
+        const ny = y + dy;
+        const nextKey = key(nx, ny);
+
+        if (
+          nx < 0 ||
+          ny < 0 ||
+          nx >= width ||
+          ny >= height ||
+          seen.has(nextKey) ||
+          Number(map.col.check(nx, ny)) !== 0
+        ) {
+          continue;
+        }
+
+        seen.add(nextKey);
+        queue.push([nx, ny]);
+      }
+    }
+
+    return null;
+  }
+
+  function pauseFarmerForDobijara(player) {
+    dobijara.interruptedFarmer = running;
+
+    if (running) {
+      stop('Wstrzymany przez Dobijarę');
+    }
+
+    dobijara.busy = true;
+    dobijara.target = player;
+    dobijara.targetLastSeen = Date.now();
+    dobijara.lastMove = 0;
+    dobijara.lastAttack = 0;
+    dobijara.attackAttempts = 0;
+    dobijara.sawFight = false;
+    dobijara.autoFightClicked = false;
+    dobijara.resumeAt = 0;
+
+    setDobijaraStatus(`Cel: ${player.nick}`);
+
+    console.log(
+      '[Dobijara] Rozpoczynam pościg:',
+      player
+    );
+  }
+
+  function resumeFarmerAfterDobijara(reason) {
+    const shouldResume =
+      dobijara.interruptedFarmer &&
+      dobijara.enabled;
+
+    dobijara.busy = false;
+    dobijara.target = null;
+    dobijara.sawFight = false;
+    dobijara.autoFightClicked = false;
+    dobijara.resumeAt = 0;
+    dobijara.interruptedFarmer = false;
+
+    setDobijaraStatus(reason);
+
+    console.log('[Dobijara]', reason);
+
+    if (shouldResume) {
+      start();
+    }
+  }
+
+  function dobijaAttack(player, now) {
+    const engine = getEngine();
+
+    if (!dobijara.enabled || !isPvpEnabled(engine)) {
+      return;
+    }
+
+    if (
+      now - dobijara.lastAttack <
+      DOBIJARA_CONFIG.attackRetryMs
+    ) {
+      return;
+    }
+
+    if (
+      dobijara.attackAttempts >=
+      DOBIJARA_CONFIG.maxAttackAttempts
+    ) {
+      resumeFarmerAfterDobijara(
+        'Nie udało się rozpocząć walki'
+      );
+      return;
+    }
+
+    if (typeof game._g !== 'function') {
+      resumeFarmerAfterDobijara(
+        'Brak funkcji ataku'
+      );
+      return;
+    }
+
+    // Dla gracza używamy dodatniego ID.
+    game._g(
+      `fight&a=attack&id=${encodeURIComponent(player.id)}`
+    );
+
+    dobijara.lastAttack = now;
+    dobijara.attackAttempts++;
+
+    setDobijaraStatus(
+      `Atakuję: ${player.nick} (${dobijara.attackAttempts})`
+    );
+  }
+
+  function dobijaMove(engine, player, now) {
+    if (
+      now - dobijara.lastMove <
+      DOBIJARA_CONFIG.moveRetryMs
+    ) {
+      return;
+    }
+
+    const destination = getDobijaraDestination(
+      engine,
+      player
+    );
+
+    if (!destination) {
+      setDobijaraStatus(
+        `Brak drogi do: ${player.nick}`
+      );
+      return;
+    }
+
+    if (typeof engine.hero.autoGoTo !== 'function') {
+      resumeFarmerAfterDobijara(
+        'Brak funkcji autoGoTo'
+      );
+      return;
+    }
+
+    engine.hero.autoGoTo({
+      x: destination.x,
+      y: destination.y
+    });
+
+    dobijara.lastMove = now;
+
+    setDobijaraStatus(
+      `Podążam za: ${player.nick}`
+    );
+  }
+
+  function isPvpEnabled(engine) {
+    const pvp = engine.map?.d?.pvp;
+
+    // W starszym interfejsie wartość 2 oznaczała
+    // mapę z bezwarunkowym PvP (czerwoną).
+    // W aktualnym Engine wymaga to weryfikacji.
+    return Number(pvp) === 2;
+  }
+
+  function dobijaraTick() {
+    if (!dobijara.enabled) return;
+
+    try {
+      const engine = getEngine();
+      const now = Date.now();
+
+      // Dobijara działa wyłącznie na mapach PvP.
+      if (!isPvpEnabled(engine)) {
+        if (dobijara.busy) {
+          // Przerwij pościg i wznów Farmera,
+          // jeśli został wcześniej wstrzymany.
+          resumeFarmerAfterDobijara(
+            'Poza mapą PvP'
+          );
+        } else {
+          setDobijaraStatus(
+            'Oczekiwanie na mapę PvP'
+          );
+        }
+
+        return;
+      }
+
+      // Pozostała część dotychczasowej funkcji...
+
+      if (engine.dead) {
+        disableDobijara();
+        return;
+      }
+
+      const captcha = document.querySelector(
+        '.captcha-window'
+      );
+
+      if (
+        captcha &&
+        captcha.getClientRects().length > 0
+      ) {
+        disableDobijara();
+        return;
+      }
+
+      // Dobijara nie przerywa walk już trwających.
+      const fighting = isFighting(engine);
+
+      if (!dobijara.busy) {
+        if (!running || fighting) return;
+
+        const player = findDobijaraTarget(engine);
+
+        if (player) {
+          pauseFarmerForDobijara(player);
+        }
+
+        return;
+      }
+
+      // Wykrywanie zakończenia walki.
+      if (fighting) {
+        dobijara.sawFight = true;
+        setDobijaraStatus('Walka PvP');
+
+        if (!dobijara.autoFightClicked) {
+          const autoButton = document.querySelector(
+            '.auto-fight-btn'
+          );
+
+          if (autoButton) {
+            autoButton.click();
+            dobijara.autoFightClicked = true;
+          }
+        }
+
+        return;
+      }
+
+      if (dobijara.sawFight) {
+        if (!dobijara.resumeAt) {
+          dobijara.resumeAt =
+            now + DOBIJARA_CONFIG.afterFightMs;
+        }
+
+        if (now >= dobijara.resumeAt) {
+          resumeFarmerAfterDobijara(
+            'Walka zakończona'
+          );
+        }
+
+        return;
+      }
+
+      const tracked = getPlayersOnMap(engine)
+        .find(player =>
+          String(player.id) ===
+          String(dobijara.target?.id)
+        );
+
+      if (!tracked) {
+        if (
+          now - dobijara.targetLastSeen >
+          DOBIJARA_CONFIG.lostTargetMs
+        ) {
+          resumeFarmerAfterDobijara(
+            'Gracz opuścił mapę'
+          );
+        }
+
+        return;
+      }
+
+      // Ponowna kontrola relacji.
+      if (!isHostilePlayer(tracked, engine)) {
+        resumeFarmerAfterDobijara(
+          'Gracz jest chroniony relacją'
+        );
+        return;
+      }
+
+      dobijara.target = tracked;
+      dobijara.targetLastSeen = now;
+
+      const hero = engine.hero.d;
+
+      const dx = Math.abs(hero.x - tracked.x);
+      const dy = Math.abs(hero.y - tracked.y);
+
+      // Zbliżamy się do pola sąsiadującego,
+      // a grze pozostawiamy weryfikację zasięgu PvP.
+      if (dx <= 1 && dy <= 1) {
+        dobijaAttack(tracked, now);
+      } else {
+        dobijaMove(engine, tracked, now);
+      }
+
+    } catch (error) {
+      console.error('[Dobijara]', error);
+
+      resumeFarmerAfterDobijara(
+        `Błąd: ${error.message}`
+      );
+    }
+  }
+
+  function enableDobijara() {
+    if (dobijara.enabled) return;
+
+    dobijara.enabled = true;
+    dobijaraButton.textContent = 'Zatrzymaj';
+
+    dobijara.timer = setInterval(
+      dobijaraTick,
+      DOBIJARA_CONFIG.tickMs
+    );
+
+    setDobijaraStatus('Aktywna - szukanie graczy');
+  }
+
+  function disableDobijara() {
+    dobijara.enabled = false;
+
+    if (dobijara.timer !== null) {
+      clearInterval(dobijara.timer);
+      dobijara.timer = null;
+    }
+
+    dobijaraButton.textContent = 'Uruchom';
+
+    const wasBusy = dobijara.busy;
+
+    if (wasBusy) {
+      const engine = game.Engine || window.Engine;
+
+      if (Array.isArray(engine?.hero?.autoPath)) {
+        engine.hero.autoPath = [];
+      }
+
+      resumeFarmerAfterDobijara(
+        'Dobijara wyłączona'
+      );
+    } else {
+      setDobijaraStatus('Wyłączona');
+    }
+  }
+
+  dobijaraButton.addEventListener('click', () => {
+    if (dobijara.enabled) {
+      disableDobijara();
+    } else {
+      enableDobijara();
+    }
+  });
 
   const api = {
     start,
@@ -1557,7 +2147,13 @@
       currentTargetId,
       attackCount,
       allowedNames: [...allowedNames],
-      allowedMaps: [...allowedMaps]
+      allowedMaps: [...allowedMaps],
+      dobijara: {
+        enabled: dobijara.enabled,
+        busy: dobijara.busy,
+        target: dobijara.target?.nick ?? null,
+        attackAttempts: dobijara.attackAttempts
+      }
     })
   };
 
