@@ -333,7 +333,8 @@
           id: d.id,
           nick: d.nick ?? d.name,
           type: Number(d.type),
-          wt: Number(d.wt),
+          wt: d.wt == null ? NaN : Number(d.wt),
+          grp: d.grp ?? null,
           lvl: Number(d.lvl),
           x: Number(d.x),
           y: Number(d.y)
@@ -347,13 +348,68 @@
       );
   }
 
+
   function getAllowedMonsters(engine) {
-    return getNpcs(engine).filter(n =>
-      allowedNames.has(normalize(n.nick)) &&
-      (n.type === 2 || n.type === 3) &&
-      !(Number.isFinite(n.wt) && n.wt >= 80)
+    // Pobieramy WSZYSTKIE NPC na mapie,
+    // a nie tylko pasujące do expowiska.
+    const allNpcs = getNpcs(engine);
+
+    // Rangi specjalne — nie wybieramy ich do farmienia.
+    const isSpecialRank = npc =>
+      !Number.isFinite(npc.wt) ||
+      npc.wt >= 10;
+
+    // Identyfikatory grup zawierających
+    // co najmniej jednego potwora o specjalnej randze.
+    const blockedGroups = new Set(
+      allNpcs
+        .filter(npc =>
+          npc.grp !== null &&
+          npc.grp !== undefined &&
+          npc.grp !== '' &&
+          npc.grp !== 0 &&
+          npc.grp !== '0' &&
+          isSpecialRank(npc)
+        )
+        .map(npc => String(npc.grp))
     );
+
+    return allNpcs.filter(npc => {
+      // Tylko NPC do walki.
+      if (npc.type !== 2 && npc.type !== 3) {
+        return false;
+      }
+
+      // Tylko potwory z wybranych expowisk.
+      if (!allowedNames.has(normalize(npc.nick))) {
+        return false;
+      }
+
+      // Nie atakuj Elit, Elit II ani innych
+      // potworów o specjalnej lub nieznanej randze.
+      if (isSpecialRank(npc)) {
+        return false;
+      }
+
+      // Nie atakuj żadnego członka grupy
+      // zawierającej potwora o specjalnej randze.
+      const groupId = npc.grp;
+
+      if (
+        groupId !== null &&
+        groupId !== undefined &&
+        groupId !== '' &&
+        groupId !== 0 &&
+        groupId !== '0' &&
+        blockedGroups.has(String(groupId))
+      ) {
+        return false;
+      }
+
+      return true;
+    });
   }
+
 
   function isAdjacent(hero, npc) {
     return (
@@ -482,6 +538,28 @@
   }
 
   function attackNpc(npc, now) {
+    const engine = getEngine();
+
+    const safeTarget = getAllowedMonsters(engine).find(
+      target => String(target.id) === String(npc.id)
+    );
+
+    if (!safeTarget) {
+      console.warn(
+        '[Farmer] Pomijam niebezpiecznego NPC lub grupę:',
+        npc.nick,
+        npc.grp
+      );
+
+      currentTargetId = null;
+      isApproachingMonster = false;
+      approachingMonsterId = null;
+      monsterLastSeen = 0;
+
+      setStatus('Pominięto grupę z elitą');
+      return;
+    }
+
     if (now - lastAttack < CONFIG.attackRetryMs) return;
 
     if (typeof game._g !== 'function') {
@@ -1653,6 +1731,7 @@
     'alliance',
     'party',
     'party-members',
+    'group',
     'self'
   ]);
 
