@@ -2754,16 +2754,29 @@
           );
         }
 
-        if (result) {
-          const npc = result.target;
+
+        if (result?.npc) {
+          const npc = result.npc;
+
+          if (npc.id == null) {
+            console.warn(
+              '[Nekropolia] NPC bez identyfikatora:',
+              npc
+            );
+            necResetTarget();
+            return;
+          }
 
           necropolia.targetId = npc.id;
           necropolia.targetKind = 'monster';
 
+          // Anulujemy planowane przejście.
           necropolia.gatewayId = null;
 
           const reached = necApproachNpc(
-            engine, npc, now
+            engine,
+            npc,
+            now
           );
 
           if (reached) {
@@ -2776,6 +2789,7 @@
 
           return;
         }
+
 
         necStatusSet(
           'Potwory są nieosiągalne'
