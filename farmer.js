@@ -1414,6 +1414,11 @@
   function start() {
     if (running) return;
 
+    if (necropolia.enabled) {
+      setStatus('Najpierw zatrzymaj Nekropolię');
+      return;
+    }
+
     const ids = getSelectedIds();
 
     if (!ids.length) {
@@ -1614,12 +1619,14 @@
   dragHandle.addEventListener('pointercancel', endDrag);
 
   function destroy() {
+    necStop();
     disableDobijara();
     stop();
 
     root.remove();
     style.remove();
     dobijaraStyle.remove();
+    necStyle.remove();
 
     if (window.Farmer === api) {
       delete window.Farmer;
@@ -2170,6 +2177,13 @@
   function enableDobijara() {
     if (dobijara.enabled) return;
 
+    if (necropolia.enabled) {
+      setDobijaraStatus(
+        'Najpierw zatrzymaj Nekropolię'
+      );
+      return;
+    }
+
     dobijara.enabled = true;
     dobijaraButton.textContent = 'Zatrzymaj';
 
@@ -2216,6 +2230,655 @@
     }
   });
 
+
+  // ==========================================
+  // NEKROPOLIA
+  // ==========================================
+
+  const NEC_CONFIG = {
+    tickMs: 500,
+    moveRetryMs: 1800,
+    attackRetryMs: 3000,
+    fightWaitMs: 10000,
+    afterFightMs: 1200,
+    gatewayTimeoutMs: 9000
+  };
+
+  const necropolia = {
+    enabled: false,
+    timer: null,
+    mapKey: null,
+    entryGateId: null,
+    usedGates: new Map(),
+    targetId: null,
+    targetKind: null,
+    lastMove: 0,
+    lastAttack: 0,
+    attackPendingUntil: 0,
+    lastFightEnd: 0,
+    wasFighting: false,
+    autoFightClicked: false,
+    gatewayId: null,
+    gatewayStartedAt: 0,
+    gatewayLastAction: 0,
+    completed: false
+  };
+
+  // Panel
+  const necPanel = document.createElement('div');
+  necPanel.className = 'farmer-necropolia';
+
+  necPanel.innerHTML = `
+    <div class="farmer-nec-title">Nekropolia</div>
+    <button type="button"
+      class="farmer-button farmer-nec-toggle">
+      Uruchom
+    </button>
+    <div class="farmer-nec-status">Wyłączona</div>
+  `;
+
+  root.querySelector('.farmer-content')
+    .appendChild(necPanel);
+
+  const necButton = necPanel.querySelector(
+    '.farmer-nec-toggle'
+  );
+
+  const necStatus = necPanel.querySelector(
+    '.farmer-nec-status'
+  );
+
+  const necStyle = document.createElement('style');
+  necStyle.textContent = `
+    #farmer-addon-window .farmer-necropolia {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #8f734b;
+    }
+
+    #farmer-addon-window .farmer-nec-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #e7b95e;
+      margin-bottom: 8px;
+    }
+
+    #farmer-addon-window .farmer-nec-toggle {
+      width: 100%;
+    }
+
+    #farmer-addon-window .farmer-nec-status {
+      margin-top: 7px;
+      font-size: 11px;
+      color: #caa169;
+      overflow-wrap: anywhere;
+    }
+  `;
+
+  document.head.appendChild(necStyle);
+
+  function necStatusSet(message) {
+    necStatus.textContent = message;
+  }
+
+  function necRawNpcs(engine) {
+    const data = engine.npcs?.check?.();
+
+    if (!data) {
+      throw new Error('Brak Engine.npcs.check()');
+    }
+
+    return Object.values(data)
+      .filter(obj => obj?.d)
+      .map(obj => ({
+        obj,
+        d: obj.d,
+        id: obj.d.id,
+        nick: String(obj.d.nick ?? ''),
+        x: Number(obj.d.x),
+        y: Number(obj.d.y)
+      }))
+      .filter(n =>
+        n.id != null &&
+        Number.isFinite(n.x) &&
+        Number.isFinite(n.y)
+      );
+  }
+
+  function necIsAttackNpc(npc) {
+    try {
+      return npc.obj.isAttackNpc?.() === true;
+    } catch {
+      return false;
+    }
+  }
+
+  function necIsGateNpc(npc) {
+    try {
+      return npc.obj.isGateNpc?.() === true;
+    } catch {
+      return false;
+    }
+  }
+
+  function necIsPortal(npc) {
+    return [
+      'portal astralny',
+      'teleport'
+    ].includes(normalize(npc.nick));
+  }
+
+  function necMapKey(engine) {
+    return String(
+      engine.map?.d?.id ??
+      engine.map?.d?.name ??
+      ''
+    );
+  }
+
+  function necCancelPath() {
+    const engine = game.Engine || window.Engine;
+
+    if (Array.isArray(engine?.hero?.autoPath)) {
+      engine.hero.autoPath = [];
+    }
+  }
+
+  function necResetTarget() {
+    necropolia.targetId = null;
+    necropolia.targetKind = null;
+    necropolia.attackPendingUntil = 0;
+    necropolia.lastMove = 0;
+  }
+
+  // Po zmianie mapy znajdujemy przejście wejściowe
+  // na podstawie pozycji, na której pojawiła się postać.
+  function necRegisterMap(engine, npcs) {
+    const key = necMapKey(engine);
+
+    if (key === necropolia.mapKey) return;
+
+    necropolia.mapKey = key;
+    necResetTarget();
+
+    necropolia.gatewayId = null;
+    necropolia.gatewayStartedAt = 0;
+    necropolia.gatewayLastAction = 0;
+
+    const hero = engine.hero.d;
+    const gates = npcs.filter(necIsGateNpc);
+
+    const entryCandidates = gates
+      .map(g => ({
+        gate: g,
+        distance:
+          Math.abs(g.x - Number(hero.x)) +
+          Math.abs(g.y - Number(hero.y))
+      }))
+      .filter(g => g.distance <= 2)
+      .sort((a, b) => a.distance - b.distance);
+
+    necropolia.entryGateId =
+      entryCandidates[0]?.gate.id ?? null;
+
+    necStatusSet(
+      `Mapa: ${engine.map?.d?.name ?? key}`
+    );
+
+    console.log('[Nekropolia] Zmiana mapy:', {
+      map: key,
+      entryGateId: necropolia.entryGateId
+    });
+  }
+
+  function necMove(engine, destination, now) {
+    if (
+      now - necropolia.lastMove <
+      NEC_CONFIG.moveRetryMs
+    ) return;
+
+    if (typeof engine.hero?.autoGoTo !== 'function') {
+      throw new Error('Brak hero.autoGoTo');
+    }
+
+    necropolia.lastMove = now;
+    engine.hero.autoGoTo({
+      x: destination.x,
+      y: destination.y
+    });
+  }
+
+  // Podchodzenie do NPC — wykorzystujemy BFS Farmera.
+  function necApproachNpc(engine, npc, now) {
+    const result = findNearestTarget(engine, [npc]);
+
+    if (!result) return false;
+
+    const hero = engine.hero.d;
+    const adjacent =
+      Math.abs(Number(hero.x) - npc.x) <= 1 &&
+      Math.abs(Number(hero.y) - npc.y) <= 1;
+
+    if (adjacent) return true;
+
+    necMove(engine, result.destination, now);
+    return false;
+  }
+
+  function necFightTick(engine, now) {
+    if (isFighting(engine)) {
+      necropolia.wasFighting = true;
+      necStatusSet('Walka w toku');
+
+      if (!necropolia.autoFightClicked) {
+        const autoButton = document.querySelector(
+          '.auto-fight-btn'
+        );
+
+        if (autoButton) {
+          autoButton.click();
+          necropolia.autoFightClicked = true;
+        }
+      }
+
+      return true;
+    }
+
+    if (necropolia.wasFighting) {
+      necropolia.wasFighting = false;
+      necropolia.autoFightClicked = false;
+      necropolia.lastFightEnd = now;
+      necResetTarget();
+
+      necStatusSet('Walka zakończona');
+      return true;
+    }
+
+    return (
+      now - necropolia.lastFightEnd <
+      NEC_CONFIG.afterFightMs
+    );
+  }
+
+  function necAttack(npc, now) {
+    if (
+      now - necropolia.lastAttack <
+      NEC_CONFIG.attackRetryMs
+    ) return;
+
+    if (typeof game._g !== 'function') {
+      throw new Error('Brak funkcji _g');
+    }
+
+    // Ostateczne sprawdzenie typu NPC.
+    const current = necRawNpcs(getEngine()).find(n =>
+      String(n.id) === String(npc.id)
+    );
+
+    if (!current || !necIsAttackNpc(current)) {
+      necResetTarget();
+      return;
+    }
+
+    const id = String(npc.id).replace(/^-/, '');
+
+    game._g(`fight&a=attack&ff=1&id=-${id}`);
+
+    necropolia.lastAttack = now;
+    necropolia.attackPendingUntil =
+      now + NEC_CONFIG.fightWaitMs;
+
+    necStatusSet(`Atak: ${npc.nick}`);
+  }
+
+  function necChooseGate(engine, gates) {
+    const key = necMapKey(engine);
+
+    if (!necropolia.usedGates.has(key)) {
+      necropolia.usedGates.set(key, new Set());
+    }
+
+    const used = necropolia.usedGates.get(key);
+
+    const candidates = gates
+      .filter(g =>
+        String(g.id) !==
+        String(necropolia.entryGateId)
+      )
+      .map(g => ({
+        gate: g,
+        path: getGatewayPath(engine, g)
+      }))
+      .filter(g => g.path !== null);
+
+    if (!candidates.length) return null;
+
+    // Najpierw przejścia, których jeszcze
+    // nie próbowaliśmy na tej mapie.
+    const unvisited = candidates.filter(g =>
+      !used.has(String(g.gate.id))
+    );
+
+    const available = unvisited.length
+      ? unvisited
+      : candidates;
+
+    available.sort(
+      (a, b) => a.path.length - b.path.length
+    );
+
+    return available[0];
+  }
+
+  function necUseGate(engine, gate, now) {
+    const hero = engine.hero.d;
+
+    const atGate =
+      Number(hero.x) === gate.x &&
+      Number(hero.y) === gate.y;
+
+    if (!atGate) {
+      necStatusSet(
+        `Przejście: ${gate.x}, ${gate.y}`
+      );
+      necMove(engine, gate, now);
+      return;
+    }
+
+    if (
+      now - necropolia.gatewayLastAction < 2500
+    ) return;
+
+    necropolia.gatewayLastAction = now;
+
+    // Przejście walkover zwykle wyzwalane
+    // jest po wejściu na pole NPC.
+    if (
+      typeof engine.hero.getTroughGateway ===
+      'function'
+    ) {
+      engine.hero.getTroughGateway();
+    } else if (
+      typeof gate.obj.onclick === 'function'
+    ) {
+      gate.obj.onclick({
+        type: 'click',
+        button: 0,
+        preventDefault() { },
+        stopPropagation() { }
+      });
+    } else {
+      // Próba ponownego wejścia na pole.
+      engine.hero.autoGoTo({
+        x: gate.x,
+        y: gate.y
+      });
+    }
+
+    necStatusSet('Przechodzę na kolejną mapę');
+  }
+
+  function necGatewayTick(engine, npcs, now) {
+    const gates = npcs.filter(necIsGateNpc);
+    const mapKey = necMapKey(engine);
+
+    if (!gates.length) {
+      necStatusSet('Brak przejść na mapie');
+      return;
+    }
+
+    // Nie zmieniamy wybranego przejścia
+    // w trakcie podchodzenia do niego.
+    let gate = gates.find(g =>
+      String(g.id) ===
+      String(necropolia.gatewayId)
+    );
+
+    if (
+      gate &&
+      now - necropolia.gatewayStartedAt >
+      NEC_CONFIG.gatewayTimeoutMs
+    ) {
+      necropolia.usedGates
+        .get(mapKey)?.add(String(gate.id));
+
+      necropolia.gatewayId = null;
+      gate = null;
+    }
+
+    if (!gate) {
+      const selected = necChooseGate(engine, gates);
+
+      if (!selected) {
+        necStatusSet(
+          'Brak osiągalnego przejścia'
+        );
+        return;
+      }
+
+      gate = selected.gate;
+      necropolia.gatewayId = gate.id;
+      necropolia.gatewayStartedAt = now;
+      necropolia.gatewayLastAction = 0;
+    }
+
+    necUseGate(engine, gate, now);
+  }
+
+  function necTick() {
+    if (!necropolia.enabled) return;
+
+    try {
+      const engine = getEngine();
+      const now = Date.now();
+
+      if (engine.dead) {
+        necStop('Postać nie żyje');
+        return;
+      }
+
+      const captcha = document.querySelector(
+        '.captcha-window'
+      );
+
+      if (
+        captcha &&
+        captcha.getClientRects().length &&
+        getComputedStyle(captcha).visibility !== 'hidden'
+      ) {
+        necStop('Wykryto CAPTCHA');
+        return;
+      }
+
+      const npcs = necRawNpcs(engine);
+
+      necRegisterMap(engine, npcs);
+
+      if (necFightTick(engine, now)) return;
+
+      // Najwyższy priorytet: portal.
+      const portals = npcs.filter(necIsPortal);
+
+      if (portals.length) {
+        const portal = portals[0];
+
+        necropolia.targetId = portal.id;
+        necropolia.targetKind = 'portal';
+
+        necStatusSet(
+          `Znaleziono: ${portal.nick}`
+        );
+
+        const reached = necApproachNpc(
+          engine, portal, now
+        );
+
+        if (reached) {
+          necStop(
+            `Dotarto do: ${portal.nick}`,
+            true
+          );
+        }
+
+        return;
+      }
+
+      // Jeśli rozpoczęto atak, czekamy na walkę.
+      if (
+        necropolia.attackPendingUntil > now
+      ) return;
+
+      // Pobieramy tylko NPC spełniające isAttackNpc.
+      const monsters = npcs.filter(necIsAttackNpc);
+
+      if (monsters.length) {
+        let result = null;
+
+        // Zachowujemy dotychczasowy cel.
+        if (necropolia.targetKind === 'monster') {
+          const tracked = monsters.find(n =>
+            String(n.id) ===
+            String(necropolia.targetId)
+          );
+
+          if (tracked) {
+            result = findNearestTarget(
+              engine, [tracked]
+            );
+          }
+        }
+
+        if (!result) {
+          result = findNearestTarget(
+            engine, monsters
+          );
+        }
+
+        if (result) {
+          const npc = result.target;
+
+          necropolia.targetId = npc.id;
+          necropolia.targetKind = 'monster';
+
+          necropolia.gatewayId = null;
+
+          const reached = necApproachNpc(
+            engine, npc, now
+          );
+
+          if (reached) {
+            necAttack(npc, now);
+          } else {
+            necStatusSet(
+              `Podchodzę: ${npc.nick}`
+            );
+          }
+
+          return;
+        }
+
+        necStatusSet(
+          'Potwory są nieosiągalne'
+        );
+        return;
+      }
+
+      // Brak potworów: szukamy przejścia.
+      necResetTarget();
+      necGatewayTick(engine, npcs, now);
+
+    } catch (error) {
+      console.error('[Nekropolia]', error);
+      necStop(`Błąd: ${error.message}`);
+    }
+  }
+
+  function necStart() {
+    if (necropolia.enabled) return;
+
+    if (dobijara.busy) {
+      necStatusSet(
+        'Dobijara jest w trakcie akcji'
+      );
+      return;
+    }
+
+    try {
+      getEngine();
+
+      // Nie uruchamiamy obu automatów ruchu.
+      if (running) {
+        stop('Wstrzymany przez Nekropolię');
+      }
+
+      if (dobijara.enabled) {
+        disableDobijara();
+      }
+
+      Object.assign(necropolia, {
+        enabled: true,
+        mapKey: null,
+        entryGateId: null,
+        usedGates: new Map(),
+        targetId: null,
+        targetKind: null,
+        lastMove: 0,
+        lastAttack: 0,
+        attackPendingUntil: 0,
+        lastFightEnd: 0,
+        wasFighting: false,
+        autoFightClicked: false,
+        gatewayId: null,
+        gatewayStartedAt: 0,
+        gatewayLastAction: 0,
+        completed: false
+      });
+
+      necButton.textContent = 'Zatrzymaj';
+      necStatusSet('Uruchomiona');
+
+      necropolia.timer = setInterval(
+        necTick,
+        NEC_CONFIG.tickMs
+      );
+
+      necTick();
+
+    } catch (error) {
+      console.error('[Nekropolia]', error);
+      necStatusSet(`Błąd: ${error.message}`);
+    }
+  }
+
+  function necStop(
+    reason = 'Zatrzymana',
+    completed = false
+  ) {
+    necropolia.enabled = false;
+    necropolia.completed = completed;
+
+    if (necropolia.timer !== null) {
+      clearInterval(necropolia.timer);
+      necropolia.timer = null;
+    }
+
+    necCancelPath();
+
+    necButton.textContent = 'Uruchom';
+    necStatusSet(reason);
+
+    console.log('[Nekropolia]', reason);
+  }
+
+  necButton.addEventListener('click', () => {
+    if (necropolia.enabled) {
+      necStop();
+    } else {
+      necStart();
+    }
+  });
+
+
   const api = {
     start,
     stop,
@@ -2232,7 +2895,19 @@
         busy: dobijara.busy,
         target: dobijara.target?.nick ?? null,
         attackAttempts: dobijara.attackAttempts
-      }
+      },
+      necropolia: {
+        start: necStart,
+        stop: necStop,
+        getState: () => ({
+          enabled: necropolia.enabled,
+          completed: necropolia.completed,
+          mapKey: necropolia.mapKey,
+          entryGateId: necropolia.entryGateId,
+          targetId: necropolia.targetId,
+          targetKind: necropolia.targetKind
+        })
+      },
     })
   };
 
